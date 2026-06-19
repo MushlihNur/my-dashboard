@@ -3,7 +3,7 @@ interface FormInputProps {
   type?: string
   placeholder?: string
   value?: string
-  onChange?: (e: React.ChangeEventHandler<HTMLInputElement>) => void
+  onChange?: React.ChangeEventHandler<HTMLInputElement>
 }
 export default function FormInput({
   label,
@@ -20,7 +20,7 @@ export default function FormInput({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className="w-full px-3 py-2 text-sm border border-c4 rounded-lg outline-none focus:ring-2 focus:ring-c3 focus:border-transparent transition"
+        className="w-full px-3 py-2 text-sm border border-c4 rounded-lg outline-none focus:ring-2 focus:ring-c3 focus:border-transparent transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
       />
     </div>
   )

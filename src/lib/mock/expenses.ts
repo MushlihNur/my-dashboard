@@ -1,3 +1,5 @@
+import { getCategoriesByType } from "./categories"
+
 export type Expense = {
   id: string
   category: string
@@ -7,17 +9,7 @@ export type Expense = {
   created_at: string
 }
 
-export const EXPENSE_CATEGORIES = [
-  "Makan Minum",
-  "Transportasi",
-  "Tempat Tinggal",
-  "Pribadi",
-  "Kasih Sayang",
-  "Berbagi",
-  "Dana Darurat",
-  "Investasi",
-  "Other",
-]
+export const EXPENSE_CATEGORIES = getCategoriesByType("expense").map((c) => c.label)
 
 export const mockExpenses: Expense[] = [
   { id: "1", category: "Makan Minum", amount: 60000, date: "2026-06-01", note: "Makan sate sapi", created_at: "2026-06-01T09:36:33" },
