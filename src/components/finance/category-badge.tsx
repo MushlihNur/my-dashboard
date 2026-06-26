@@ -10,7 +10,7 @@ export default function CategoryBadge({ category }: { category: string }) {
         backgroundColor: `${color}25`,
         color: color,
       }}
-      className="px-2 py-0.5 rounded-full text-xs font-medium"
+      className="px-2 py-0.5 rounded-full text-center text-xs font-medium"
     >
       {category}
     </span>
