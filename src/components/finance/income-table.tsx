@@ -1,6 +1,5 @@
 import { formatRupiah } from "@/lib/format"
 import { Income } from "@/lib/mock/income"
-import { cn } from "@/lib/utils"
 import { format, parseISO } from "date-fns"
 import CategoryBadge from "./category-badge"
 
