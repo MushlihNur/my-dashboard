@@ -2,7 +2,8 @@
 
 import ExpenseChart from "@/components/finance/expense-chart"
 import RecentTransactions from "@/components/finance/recent-transactions"
-import StatsCard from "@/components/finance/stats-card"
+import StatsCard from "@/components/ui/stats-card"
+import { formatRupiah } from "@/lib/format"
 import { getBudget } from "@/lib/mock/budget"
 import { mockExpenses } from "@/lib/mock/expenses"
 import { mockIncome } from "@/lib/mock/income"
@@ -34,15 +35,15 @@ export default function FinanceOverviewPage() {
   const budget = getBudget(currentYear, currentMonth)
   const limit = budget?.limit ?? 0
   const balance = limit - totalExpenses
-  const balanceVariant = balance >= 0 ? "positive" : "negative"
+  const balanceVariant = balance >= 0 ? "text-green-600" : "text-red-500"
 
   return (
     <div className="flex flex-col gap-6">
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        <StatsCard label="Income" amount={totalIncome} variant="positive" />
-        <StatsCard label="Limit" amount={limit} variant="default" />
-        <StatsCard label="Expenses" amount={totalExpenses} variant="negative" />
-        <StatsCard label="Balance" amount={balance} variant={balanceVariant} />
+        <StatsCard label="Income" value={formatRupiah(totalIncome)} valueClassName="text-green-600" />
+        <StatsCard label="Limit" value={formatRupiah(limit)} />
+        <StatsCard label="Expenses" value={formatRupiah(totalExpenses)} valueClassName="text-red-500" />
+        <StatsCard label="Balance" value={formatRupiah(balance)} valueClassName={balanceVariant} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

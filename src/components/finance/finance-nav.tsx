@@ -9,13 +9,14 @@ const financeNavItems = [
   { label: "Expenses", href: "/finance/expenses" },
   { label: "Income", href: "/finance/income" },
   { label: "Summary", href: "/finance/summary" },
+  { label: "Goals", href: "/finance/goals" },
 ]
 
 export default function FinanceNav() {
   const pathname = usePathname()
 
   return (
-    <div className="flex gap-1 border-b border-c4 mb-6">
+    <div className="flex gap-1 border-b border-c4 mb-6 overflow-auto scrollbar-none">
       {financeNavItems.map((item) => {
         const isActive = item.href === "/finance"
           ? pathname === "/finance"

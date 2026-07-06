@@ -35,7 +35,7 @@ export default function AddIncomeDialog() {
             </select>
           </div>
 
-          <FormInput label="Amount" type="number" placeholder="7500000" />
+          <FormInput label="Amount" type="number" placeholder="7.500.000" formatNumber />
           <FormInput label="Date" type="date" />
           <FormInput label="Description" placeholder="e.g. Gaji Juni 2026" />
 

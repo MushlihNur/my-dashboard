@@ -34,7 +34,7 @@ export default function AddExpenseDialog() {
               ))}
             </select>
           </div>
-            <FormInput label="Amount" type="number" placeholder="60000" />
+            <FormInput label="Amount" type="number" placeholder="60.000" formatNumber />
             <FormInput label="Date" type="date" />
             <FormInput label="Description" placeholder="e.g. Makan sate ayam" />
 
