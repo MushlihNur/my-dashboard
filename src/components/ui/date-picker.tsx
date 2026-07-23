@@ -26,6 +26,7 @@ export default function DatePicker({
   const [open, setOpen] = useState(false)
   const selected = value ? parseISO(value) : undefined
   const today = new Date()
+  const currentYear = today.getFullYear()
 
   function handleSelect(date: Date | undefined) {
     if (!date) return
@@ -64,6 +65,8 @@ export default function DatePicker({
             captionLayout="dropdown"
             defaultMonth={selected ?? today}
             initialFocus
+            startMonth={new Date(currentYear - 100, 0)}
+            endMonth={new Date(currentYear + 100, 11)}
             classNames={{
               today: cn(
                 "relative font-semibold text-c2",

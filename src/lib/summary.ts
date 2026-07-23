@@ -1,11 +1,15 @@
-import { Expense } from "@/lib/mock/expenses";
-import { Income } from "@/lib/mock/income";
 import { getMonth, getYear, parseISO } from "date-fns";
 
+type TransactionItem = {
+  date: string
+  amount: number
+  categories: { label: string }
+}
+
 export function aggregateByCategory(
-  data: (Expense | Income)[],
+  data: TransactionItem[],
   year: number
-): Record<string, Rercord<number, number>> {
+): Record<string, Record<number, number>> {
   const result: Record<string, Record<number, number>> = {}
 
   data.forEach((item) => {
@@ -13,8 +17,10 @@ export function aggregateByCategory(
     if (getYear(date) !== year) return
 
     const month = getMonth(date) + 1
-    if (!result[item.category]) result[item.category] = {}
-    result[item.category][month] = (result[item.category][month] ?? 0) + item.amount
+    const category = item.categories.label
+
+    if (!result[category]) result[category] = {}
+    result[category][month] = (result[category][month] ?? 0) + item.amount
   })
 
   return result

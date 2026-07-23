@@ -1,15 +1,17 @@
 "use client"
 
-import { Goal } from "@/lib/mock/goals";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Plus } from "lucide-react";
 import FormInput from "../ui/form-input";
 import DatePicker from "../ui/date-picker";
+import { Goal } from "@/lib/supabase/types-helper";
+import { addGoal, updateGoal } from "@/lib/api/goals";
 
 interface GoalFormDialogProps {
   goal?: Goal
+  onSuccess: () => void
 }
 
 const STATUS_OPTIONS = [
@@ -18,7 +20,7 @@ const STATUS_OPTIONS = [
   { value: "cancelled", label: "Cancelled" },
 ]
 
-export default function GoalFormDialog({ goal }: GoalFormDialogProps) {
+export default function GoalFormDialog({ goal, onSuccess }: GoalFormDialogProps) {
   const isEdit = !!goal
 
   const [open, setOpen] = useState(false)
@@ -27,14 +29,55 @@ export default function GoalFormDialog({ goal }: GoalFormDialogProps) {
   const [targetAmount, setTargetAmount] = useState(goal?.target_amount ? String(goal.target_amount) : "")
   const [deadline, setDeadline] = useState(goal?.deadline ?? "")
   const [status, setStatus] = useState<Goal["status"]>(goal?.status ?? "ongoing")
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
+
+  useEffect(() => {
+    if (open) {
+      setName(goal?.name ?? "")
+      setIcon(goal?.icon ?? "")
+      setTargetAmount(goal?.target_amount ? String(goal.target_amount) : "")
+      setDeadline(goal?.deadline ?? "")
+      setStatus(goal?.status ?? "ongoing")
+      setError("")
+    }
+  }, [open, goal])
 
   function handleClose() {
     setOpen(false)
-    setName(goal?.name ?? "")
-    setIcon(goal?.icon ?? "")
-    setTargetAmount(goal?.target_amount ? String(goal.target_amount) : "")
-    setDeadline(goal?.deadline ?? "")
-    setStatus(goal?.status ?? "ongoing")
+    setError("")
+  }
+
+  async function handleSave() {
+    if (!name || !targetAmount || !deadline) return
+
+    setLoading(true)
+    setError("")
+
+    try {
+      if (isEdit && goal) {
+        await updateGoal(goal.id, {
+          name,
+          icon,
+          target_amount: Number(targetAmount),
+          deadline,
+          status,
+        })
+      } else {
+        await addGoal({
+          name,
+          icon: icon || "🎯",
+          target_amount: Number(targetAmount),
+          deadline,
+        })
+      }
+      handleClose()
+      onSuccess()
+    } catch {
+      setError("Failed to save goal. Please try again.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -101,8 +144,8 @@ export default function GoalFormDialog({ goal }: GoalFormDialogProps) {
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-c3">Status</label>
               <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value as Goal["status"])}
+                value={status ?? "ongoing"}
+                onChange={(e) => setStatus(e.target.value)}
                 className="w-full px-3 py-2 text-sm border border-c4 rounded-lg outline-none focus:ring-2 focus:ring-c3 focus:border-transparent transition bg-white text-c3"
               >
                 {STATUS_OPTIONS.map((opt) => (
@@ -118,19 +161,27 @@ export default function GoalFormDialog({ goal }: GoalFormDialogProps) {
             </p>
           )}
 
+          {error && (
+            <p className="text-xs text-red-500 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+              {error}
+            </p>
+          )}
+
           <div className="flex gap-2 justify-end mt-2">
             <Button
               variant="outline"
               className="cursor-pointer"
               onClick={handleClose}
+              disabled={loading}
             >
               Cancel
             </Button>
             <Button
               className="cursor-pointer"
-              disabled={!name || !targetAmount || !deadline}
+              onClick={handleSave}
+              disabled={loading || !name || !targetAmount || !deadline}
             >
-              {isEdit ? "Save Changes" : "Save"}
+              {loading ? "Saving..." : isEdit ? "Save Changes" : "Save"}
             </Button>
           </div>
         </div>

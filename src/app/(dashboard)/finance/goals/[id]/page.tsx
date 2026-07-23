@@ -1,18 +1,19 @@
 "use client"
 
-import AddSnapshotDialog from "@/components/finance/add-snapshot-dialog"
 import GoalFormDialog from "@/components/finance/goal-form-dialog"
 import GoalProgressChart from "@/components/finance/goal-progress-chart"
 import GoalSnapshotHistory from "@/components/finance/goal-snapshot-history"
-import { Button } from "@/components/ui/button"
+import SnapshotFormDialog from "@/components/finance/snapshot-form-dialog"
 import StatsCard from "@/components/ui/stats-card"
+import { deleteGoalSnapshot, getGoalById, getGoalSnapshots, getLatestGoalSnapshot } from "@/lib/api/goals"
 import { formatRupiah } from "@/lib/format"
-import { getGoalSnapshots, getLatestSnapshot, mockGoals } from "@/lib/mock/goals"
+import { Goal, GoalSnapshot } from "@/lib/supabase/types-helper"
 import { cn } from "@/lib/utils"
 import { format, parseISO } from "date-fns"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { notFound, useParams } from "next/navigation"
+import { useCallback, useEffect, useState } from "react"
 
 const statusStyles: Record<string, string> = {
   ongoing: "bg-blue-100 text-blue-700",
@@ -28,13 +29,42 @@ const statusLabels: Record<string, string> = {
 
 export default function GoalDetailPage() {
   const { id } = useParams<{ id: string }>()
-  const goal = mockGoals.find((g) => g.id === id)
-
-  if (!goal) notFound()
   
-  const snapshot = getLatestSnapshot(goal.id)
-  const snapshots = getGoalSnapshots(goal.id)
-  const current = snapshot?.amount ?? 0
+  const [goal, setGoal] = useState<Goal | null>(null)
+  const [snapshots, setSnapshots] = useState<GoalSnapshot[]>([])
+  const [latest, setLatest] = useState<GoalSnapshot | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [notFound2, setNotFound2] = useState(false)
+
+  const fetchData = useCallback(async () => {
+    setLoading(true)
+    try {
+      const [goalData, snapshotsData, latestData] = await Promise.all([
+        getGoalById(id),
+        getGoalSnapshots(id),
+        getLatestGoalSnapshot(id),
+      ])
+      setGoal(goalData)
+      setSnapshots(snapshotsData)
+      setLatest(latestData)
+    } catch {
+      setNotFound2(true)
+    } finally {
+      setLoading(false)
+    }
+  }, [id])
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
+
+  if (loading) {
+    return <div className="text-center py-12 text-sm text-c2">Loading...</div>
+  }
+
+  if (notFound2 || !goal) return notFound()
+
+  const current = latest?.amount ?? 0
   const percentage = Math.min(Math.round((current / goal.target_amount) * 100), 100)
   const remaining = Math.max(goal.target_amount - current, 0)
 
@@ -63,11 +93,16 @@ export default function GoalDetailPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className={cn("px-2.5 py-1 rounded-full text-xs font-medium", statusStyles[goal.status])}>
-              {statusLabels[goal.status]}
+            <span className={cn("px-2.5 py-1 rounded-full text-xs font-medium", statusStyles[goal.status ?? "ongoing"])}>
+              {statusLabels[goal.status ?? "ongoing"]}
             </span>
-            <GoalFormDialog goal={goal} />
-            <AddSnapshotDialog goalName={goal.name} currentAmount={current} />
+            <GoalFormDialog goal={goal} onSuccess={fetchData} />
+            <SnapshotFormDialog 
+              goalId={goal.id} 
+              goalName={goal.name} 
+              currentAmount={current} 
+              onSuccess={fetchData}
+            />
           </div>
         </div>
       </div>
@@ -105,9 +140,18 @@ export default function GoalDetailPage() {
           snapshots={snapshots} 
           targetAmount={goal.target_amount} 
           deadline={goal.deadline} 
-          status={goal.status} 
+          status={goal.status ?? "ongoing"} 
         />
-        <GoalSnapshotHistory snapshots={snapshots} />
+        <GoalSnapshotHistory
+          snapshots={snapshots} 
+          goalName={goal.name}
+          currentAmount={current}
+          onDeleteSnapshot={async (snapshotId) => {
+            await deleteGoalSnapshot(snapshotId)
+            fetchData()
+          }}
+          onSuccess={fetchData}
+        />
       </div>
     </div>
   )

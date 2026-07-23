@@ -1,14 +1,42 @@
 "use client"
 
 import SummaryTable from "@/components/finance/summary-table";
-import { mockExpenses } from "@/lib/mock/expenses";
-import { mockIncome } from "@/lib/mock/income";
-import { useState } from "react";
+import { getBudgetsByYear } from "@/lib/api/budget";
+import { getExpensesByYear } from "@/lib/api/expenses";
+import { getIncomeByYear } from "@/lib/api/income";
+import { ExpenseWithCategory, IncomeWithCategory, MonthlyBudget } from "@/lib/supabase/types-helper";
+import { useEffect, useState } from "react";
 
 const AVAILABLE_YEARS = [2024, 2025, 2026]
 
 export default function SummaryPage() {
-  const [selectedYear, setSeletedYear] = useState(new Date().getFullYear())
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
+  const [expenses, setExpenses] = useState<ExpenseWithCategory[]>([])
+  const [income, setIncome] = useState<IncomeWithCategory[]>([])
+  const [budgets, setBudgets] = useState<MonthlyBudget[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchAll() {
+      setLoading(true)
+      try {
+        const [expensesData, incomeData, budgetsData] = await Promise.all([
+          getExpensesByYear(selectedYear),
+          getIncomeByYear(selectedYear),
+          getBudgetsByYear(selectedYear),
+        ])
+        setExpenses(expensesData)
+        setIncome(incomeData)
+        setBudgets(budgetsData)
+      } catch (err) {
+        console.error("Failed to fetch summary data:", err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchAll()
+  }, [selectedYear])
 
   return (
     <div className="flex flex-col gap-6">
@@ -16,7 +44,7 @@ export default function SummaryPage() {
         {AVAILABLE_YEARS.map((year) => (
           <button
             key={year}
-            onClick={() => setSeletedYear(year)}
+            onClick={() => setSelectedYear(year)}
             className={`px-4 py-1.5 rounded-lg text-sm font-medium transition cursor-pointer ${
               selectedYear === year
                 ? "bg-c3 text-white"
@@ -28,11 +56,16 @@ export default function SummaryPage() {
         ))}
       </div>
 
-      <SummaryTable
-        expenses={mockExpenses}
-        income={mockIncome}
-        year={selectedYear}
-      />
+      {loading ? (
+        <div className="text-center py-12 text-sm text-c2">Loading...</div>
+      ) : (
+        <SummaryTable
+          expenses={expenses}
+          income={income}
+          budgets={budgets}
+          year={selectedYear}
+        />
+      )}
     </div>
   )
 }

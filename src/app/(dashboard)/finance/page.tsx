@@ -3,39 +3,63 @@
 import ExpenseChart from "@/components/finance/expense-chart"
 import RecentTransactions from "@/components/finance/recent-transactions"
 import StatsCard from "@/components/ui/stats-card"
+import { getBudget } from "@/lib/api/budget"
+import { getExpenses } from "@/lib/api/expenses"
+import { getIncome } from "@/lib/api/income"
 import { formatRupiah } from "@/lib/format"
-import { getBudget } from "@/lib/mock/budget"
-import { mockExpenses } from "@/lib/mock/expenses"
-import { mockIncome } from "@/lib/mock/income"
-import { endOfMonth, isWithinInterval, parseISO, startOfMonth } from "date-fns"
-import { useMemo } from "react"
+import { ExpenseWithCategory, IncomeWithCategory, MonthlyBudget } from "@/lib/supabase/types-helper"
+import { endOfMonth, format, startOfMonth } from "date-fns"
+import { useEffect, useState } from "react"
 
 const today = new Date()
 const currentMonth = today.getMonth() + 1
 const currentYear = today.getFullYear()
+const monthStart = startOfMonth(today)
+const monthEnd = endOfMonth(today)
 
 export default function FinanceOverviewPage() {
-  const monthStart = startOfMonth(today)
-  const monthEnd = endOfMonth(today)
+  const [expenses, setExpenses] = useState<ExpenseWithCategory[]>([])
+  const [income, setIncome] = useState<IncomeWithCategory[]>([])
+  const [budget, setBudget] = useState<MonthlyBudget | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  const thisMonthExpenses = useMemo(() => 
-    mockExpenses.filter((e) => 
-      isWithinInterval(parseISO(e.date), { start: monthStart, end: monthEnd })
-    ), []
-  )
+  useEffect(() => {
+    async function fetchAll() {
+      setLoading(true)
+      try {
+        const [expensesData, incomeData, budgetData] = await Promise.all([
+          getExpenses(
+            format(monthStart, "yyyy-MM-dd"),
+            format(monthEnd, "yyyy-MM-dd")
+          ),
+          getIncome(
+            format(monthStart, "yyyy-MM-dd"),
+            format(monthEnd, "yyyy-MM-dd")
+          ),
+          getBudget(currentYear, currentMonth),
+        ])
+        setExpenses(expensesData)
+        setIncome(incomeData)
+        setBudget(budgetData)
+      } catch (err) {
+        console.error("Failed to fetch overview data:", err)
+      } finally {
+        setLoading(false)
+      }
+    }
 
-  const thisMonthIncome = useMemo(() => 
-    mockIncome.filter((i) => 
-      isWithinInterval(parseISO(i.date), { start: monthStart, end: monthEnd })
-    ), []
-  )
+    fetchAll()
+  }, [])
 
-  const totalIncome = thisMonthIncome.reduce((sum, i) => sum + i.amount, 0)
-  const totalExpenses = thisMonthExpenses.reduce((sum, i) => sum + i.amount, 0)
-  const budget = getBudget(currentYear, currentMonth)
-  const limit = budget?.limit ?? 0
+  const totalIncome = income.reduce((sum, i) => sum + i.amount, 0)
+  const totalExpenses = expenses.reduce((sum, i) => sum + i.amount, 0)
+  const limit = budget?.limit_amount ?? 0
   const balance = limit - totalExpenses
   const balanceVariant = balance >= 0 ? "text-green-600" : "text-red-500"
+
+  if (loading) {
+    return <div className="text-center py-12 text-sm text-c2">Loading...</div>
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -47,8 +71,8 @@ export default function FinanceOverviewPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <ExpenseChart expenses={thisMonthExpenses} />
-        <RecentTransactions expenses={thisMonthExpenses} />
+        <ExpenseChart expenses={expenses} />
+        <RecentTransactions expenses={expenses} />
       </div>
     </div>
   )

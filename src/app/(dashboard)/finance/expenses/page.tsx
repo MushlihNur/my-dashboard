@@ -1,12 +1,14 @@
 "use client"
 
-import AddExpenseDialog from "@/components/finance/add-expenses-dialog";
 import ExpensesTable from "@/components/finance/expenses-table";
-import { EXPENSE_CATEGORIES, mockExpenses } from "@/lib/mock/expenses";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
-import { endOfMonth, isWithinInterval, parseISO, startOfMonth } from "date-fns";
+import { endOfMonth, format, startOfMonth } from "date-fns";
 import DateRangePicker from "@/components/ui/date-range-picker";
+import { Category, ExpenseWithCategory } from "@/lib/supabase/types-helper";
+import { getCategoriesByType } from "@/lib/api/categories";
+import { getExpenses } from "@/lib/api/expenses";
+import ExpenseFormDialog from "@/components/finance/expense-form-dialog";
 
 const today = new Date()
 const defaultRange: DateRange = {
@@ -17,22 +19,43 @@ const defaultRange: DateRange = {
 export default function ExpensesPage() {
   const [dateRange, setDateRange] = useState<DateRange | undefined>(defaultRange)
   const [selectedCategory, setSelectedCategory] = useState<string>("")
+  const [expenses, setExpenses] = useState<ExpenseWithCategory[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
 
-  const filtered = mockExpenses.filter((e) => {
-    const expenseDate = parseISO(e.date)
+  useEffect(() => {
+    getCategoriesByType("expense")
+      .then(setCategories)
+      .catch(() => setError("Failed to load categories"))
+  }, [])
 
-    const inRange = 
-      dateRange?.from && dateRange?.to
-        ? isWithinInterval(expenseDate, {
-            start: dateRange.from,
-            end: dateRange.to,
-          })
-        : true
+  const fetchExpenses = useCallback(async () => {
+    if (!dateRange?.from || !dateRange?.to) return
 
-    const inCategory = selectedCategory ? e.category === selectedCategory : true
+    setLoading(true)
+    setError("")
 
-    return inRange && inCategory
-  })
+    try {
+      const data = await getExpenses(
+        format(dateRange.from, "yyyy-MM-dd"),
+        format(dateRange.to, "yyyy-MM-dd"),
+      )
+      setExpenses(data)
+    } catch {
+      setError("Failed to load expenses")
+    } finally {
+      setLoading(false)
+    }
+  }, [dateRange])
+
+  useEffect(() => {
+    fetchExpenses()
+  }, [fetchExpenses])
+
+  const filtered = selectedCategory
+    ? expenses.filter((e) => e.category_id === selectedCategory)
+    : expenses
 
   return (
     <div className="flex flex-col gap-6">
@@ -50,16 +73,26 @@ export default function ExpensesPage() {
             className="px-3 py-1.5 text-sm border border-c4 rounded-lg outline-none focus:ring-2 focus:ring-c3 bg-white text-c3 cursor-pointer"
           >
             <option value="">All Categories</option>
-            {EXPENSE_CATEGORIES.map((cat) => (
-              <option key={cat} value={cat}>{cat}</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>{cat.label}</option>
             ))}
           </select>
         </div>
 
-        <AddExpenseDialog />
+        <ExpenseFormDialog onSuccess={fetchExpenses} />
       </div>
 
-      <ExpensesTable expenses={filtered} />
+      {error && (
+        <p className="text-sm text-red-500 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+          {error}
+        </p>
+      )}
+
+      {loading ? (
+        <div className="text-center py-12 text-sm text-c2">Loading...</div>
+      ) : (
+        <ExpensesTable expenses={filtered} onSuccess={fetchExpenses} />
+      )}
     </div>
   )
 }

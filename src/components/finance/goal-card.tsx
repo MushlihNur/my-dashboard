@@ -1,13 +1,15 @@
 "use client"
 
+import { getLatestGoalSnapshot } from "@/lib/api/goals";
 import { formatRupiah } from "@/lib/format";
-import { getLatestSnapshot, Goal } from "@/lib/mock/goals";
+import { Goal, GoalSnapshot } from "@/lib/supabase/types-helper";
 import { cn } from "@/lib/utils";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { format, parseISO } from "date-fns";
-import { GripVertical } from "lucide-react";
+import { GripVertical, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 const statusStyles: Record<string, string> = {
   ongoing: "bg-blue-100 text-blue-700",
@@ -21,7 +23,14 @@ const statusLabels: Record<string, string> = {
   cancelled: "Cancelled",
 }
 
-export default function GoalCard({ goal }: {goal: Goal}) {
+interface GoalCardProps {
+  goal: Goal
+  onDelete: () => void
+}
+
+export default function GoalCard({ goal, onDelete }: GoalCardProps) {
+  const [snapshot, setSnapshot] = useState<GoalSnapshot | null>(null)
+
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: goal.id,
   })
@@ -31,7 +40,10 @@ export default function GoalCard({ goal }: {goal: Goal}) {
     transition,
   }
 
-  const snapshot = getLatestSnapshot(goal.id)
+  useEffect(() => {
+    getLatestGoalSnapshot(goal.id).then(setSnapshot)
+  }, [goal.id])
+
   const current = snapshot?.amount ?? 0
   const percentage = Math.min(Math.round((current / goal.target_amount) * 100), 100)
 
@@ -44,6 +56,7 @@ export default function GoalCard({ goal }: {goal: Goal}) {
         isDragging ? "opacity-50 shadow-lg" : "hover:shadow-sm hover:border-c2"
       )}
     >
+      {/* Drag handle */}
       <button
         {...attributes}
         {...listeners}
@@ -53,10 +66,20 @@ export default function GoalCard({ goal }: {goal: Goal}) {
         <GripVertical size={16} />
       </button>
 
+      {/* Delete button */}
+      <button
+        onClick={(e) => {
+          e.preventDefault()
+          onDelete()
+        }}
+        className="absolute right-0 top-0 text-slate-300 hover:text-red-500 transition opacity-0 group-hover:opacity-100 z-10 p-1.5 rounded-lg hover:bg-red-50 cursor-pointer"
+      >
+        <Trash2 size={14} />
+      </button>
+
       <Link href={`/finance/goals/${goal.id}`} className="block p-5 pl-8">
         <div className="flex flex-col gap-4">
-          {/* Header */}
-          <div className="flex items-start justify-between gap-2">
+          <div className="flex items-start justify-between gap-2 pr-4">
             <div className="flex items-center gap-2">
               <span className="text-xl">{goal.icon}</span>
               <div>
@@ -69,8 +92,8 @@ export default function GoalCard({ goal }: {goal: Goal}) {
               </div>
             </div>
 
-            <span className={cn("px-2 py-0.5 rounded-full text-xs font-medium shrink-0", statusStyles[goal.status])}>
-              {statusLabels[goal.status]}
+            <span className={cn("px-2 py-0.5 rounded-full text-xs font-medium shrink-0", statusStyles[goal.status ?? "ongoing"])}>
+              {statusLabels[goal.status ?? "ongoing"]}
             </span>
           </div>
 

@@ -1,7 +1,7 @@
 "use client"
 
 import { formatRupiah } from "@/lib/format"
-import { GoalSnapshot } from "@/lib/mock/goals"
+import { GoalSnapshot } from "@/lib/supabase/types-helper"
 import { eachMonthOfInterval, format, parseISO, startOfMonth } from "date-fns"
 import { Brush, CartesianGrid, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 

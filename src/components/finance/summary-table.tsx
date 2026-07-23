@@ -1,27 +1,26 @@
 import { formatRupiah } from "@/lib/format";
-import { getBudget } from "@/lib/mock/budget";
-import { Expense } from "@/lib/mock/expenses";
-import { Income } from "@/lib/mock/income";
 import { aggregateByCategory, grandTotal, totalPerMonth } from "@/lib/summary";
+import { ExpenseWithCategory, IncomeWithCategory, MonthlyBudget } from "@/lib/supabase/types-helper";
 import { cn } from "@/lib/utils";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
 interface SummaryTableProps {
-  expenses: Expense[]
-  income: Income[]
+  expenses: ExpenseWithCategory[]
+  income: IncomeWithCategory[]
+  budgets: MonthlyBudget[]
   year: number
 }
 
 function Cell({ amount, className }: { amount: number; className?: string }) {
   return (
-    <td className={cn("px-3 py-2 text-right text-xs whitespace-nowrap", className)}>
+    <td className={cn("px-3 py-2 text-right text-xs whitespace-nowrap group-hover:bg-slate-50 transition", className)}>
       {amount > 0 ? formatRupiah(amount) : <span className="text-slate-300">—</span>}
     </td>
   )
 }
 
-export default function SummaryTable({ expenses, income, year }: SummaryTableProps) {
+export default function SummaryTable({ expenses, income, budgets, year }: SummaryTableProps) {
   const expenseAgg = aggregateByCategory(expenses, year)
   const incomeAgg = aggregateByCategory(income, year)
 
@@ -65,7 +64,7 @@ export default function SummaryTable({ expenses, income, year }: SummaryTablePro
           </thead>
 
           <tbody>
-            <tr>
+            <tr className="hover:bg-slate-50 transition group">
               <td className="sticky left-0 z-20 bg-slate-100 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-c3 border-b border-c4">
                 Income
               </td>
@@ -76,8 +75,8 @@ export default function SummaryTable({ expenses, income, year }: SummaryTablePro
             </tr>
 
             {incomeCategories.map((cat) => (
-              <tr key={cat} className="hover:bg-slate-50 transition">
-                <td className="sticky left-0 z-10 bg-white px-3 py-2 text-xs text-c2 border-b border-c4/50">
+              <tr key={cat} className="hover:bg-slate-50 transition group">
+                <td className="sticky left-0 z-10 bg-white px-3 py-2 text-xs text-c2 border-b border-c4/50 group-hover:bg-slate-50">
                   {cat}
                 </td>
                 {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
@@ -85,17 +84,17 @@ export default function SummaryTable({ expenses, income, year }: SummaryTablePro
                 ))}
                 <Cell
                   amount={Object.values(incomeAgg[cat]).reduce((s, v) => s + v, 0)}
-                  className="sticky right-0 bg-white text-green-600 font-medium"
+                  className="sticky right-0 bg-white text-green-600 font-medium border-b border-c4/50"
                 />
               </tr>
             ))}
 
-            <tr>
+            <tr className="hover:bg-slate-50 transition group">
               <td className="sticky left-0 z-10 bg-green-50 px-3 py-2 font-semibold text-xs text-green-700 border-b-2 border-c4">
                 Total Income
               </td>
               {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-                <td key={m} className="px-3 py-2 text-right text-xs font-semibold text-green-700 whitespace-nowrap border-b-2 border-c4">
+                <td key={m} className="px-3 py-2 text-right text-xs font-semibold bg-green-50 text-green-700 whitespace-nowrap border-b-2 border-c4">
                   {totalIncomePerMonth[m] ? formatRupiah(totalIncomePerMonth[m]) : <span className="text-slate-300">—</span>}
                 </td>
               ))}
@@ -104,22 +103,22 @@ export default function SummaryTable({ expenses, income, year }: SummaryTablePro
               </td>
             </tr>
 
-            <tr>
+            <tr className="hover:bg-slate-50 transition group">
               <td className="sticky left-0 z-10 bg-slate-50 px-3 py-2 text-xs text-c2 border-b border-c4">
                 Limit
               </td>
               {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => {
-                const budget = getBudget(year, m)
+                const budget = budgets.find((b) => b.month === m)
                 return (
                   <td key={m} className="px-3 py-2 text-right text-xs text-c2 whitespace-nowrap w-28 shrink-0 bg-slate-50/50 border-b border-c4">
-                    {budget ? formatRupiah(budget.limit) : <span className="text-slate-300">—</span>}
+                    {budget ? formatRupiah(budget.limit_amount) : <span className="text-slate-300">—</span>}
                   </td>
                 )
               })}
               <td className="sticky right-0 bg-slate-50 px-3 py-2 text-right text-xs border-b border-c4">—</td>
             </tr>
 
-            <tr>
+            <tr className="hover:bg-slate-50 transition group">
               <td className="sticky left-0 z-20 bg-slate-100 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-c3 border-b border-c4">
                 Expenses
               </td>
@@ -130,8 +129,8 @@ export default function SummaryTable({ expenses, income, year }: SummaryTablePro
             </tr>
 
             {expenseCategories.map((cat) => (
-              <tr key={cat} className="hover:bg-slate-50/50 transition">
-                <td className="sticky left-0 z-10 bg-white px-3 py-2 text-xs text-c2 border-b border-c4/50">
+              <tr key={cat} className="hover:bg-slate-50 transition group">
+                <td className="sticky left-0 z-10 bg-white px-3 py-2 text-xs text-c2 border-b border-c4/50 group-hover:bg-slate-50">
                   {cat}
                 </td>
                 {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
@@ -139,17 +138,17 @@ export default function SummaryTable({ expenses, income, year }: SummaryTablePro
                 ))}
                 <Cell
                   amount={Object.values(expenseAgg[cat]).reduce((s, v) => s + v, 0)}
-                  className="sticky right-0 bg-white font-medium"
+                  className="sticky right-0 bg-white font-medium border-b border-c4/50"
                 />
               </tr>
             ))}
 
-            <tr>
+            <tr className="hover:bg-slate-50 transition group">
               <td className="sticky left-0 z-10 bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 border-b-2 border-c4">
                 Total Expenses
               </td>
               {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-                <td key={m} className="px-3 py-2 text-right text-xs font-semibold text-red-600 whitespace-nowrap border-b-2 border-c4">
+                <td key={m} className="px-3 py-2 text-right text-xs font-semibold bg-red-50 text-red-600 whitespace-nowrap border-b-2 border-c4">
                   {totalExpensePerMonth[m] ? formatRupiah(totalExpensePerMonth[m]) : <span className="text-slate-300">—</span>}
                 </td>
               ))}
@@ -158,7 +157,7 @@ export default function SummaryTable({ expenses, income, year }: SummaryTablePro
               </td>
             </tr>
 
-            <tr>
+            <tr className="hover:bg-slate-50 transition group">
               <td className="sticky left-0 z-10 bg-slate-50 px-3 py-2 text-xs font-semibold text-c3">
                 Net
               </td>

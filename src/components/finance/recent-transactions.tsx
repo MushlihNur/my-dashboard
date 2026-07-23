@@ -1,11 +1,11 @@
-import { Expense } from "@/lib/mock/expenses";
 import Link from "next/link";
 import CategoryBadge from "./category-badge";
 import { formatRupiah } from "@/lib/format";
 import { format, parseISO } from "date-fns";
+import { ExpenseWithCategory } from "@/lib/supabase/types-helper";
 
 interface RecentTransactionsProps {
-  expenses: Expense[]
+  expenses: ExpenseWithCategory[]
 }
 
 export default function RecentTransactions({ expenses }: RecentTransactionsProps) {
@@ -31,7 +31,7 @@ export default function RecentTransactions({ expenses }: RecentTransactionsProps
           {recent.map((expense) => (
             <div key={expense.id} className="flex items-center justify-between px-5 py-3">
               <div className="flex items-center gap-3">
-                <CategoryBadge category={expense.category} />
+                <CategoryBadge category={expense.categories} />
                 <div>
                   <p className="text-sm text-c3">{expense.note}</p>
                   <p className="text-xs text-c2">{format(parseISO(expense.date), "dd MMM yyyy")}</p>

@@ -1,24 +1,26 @@
 "use client"
 
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts"
-import { Expense } from "@/lib/mock/expenses"
 import { formatRupiah } from "@/lib/format"
-import { getCategoryByLabel } from "@/lib/mock/categories"
+import { ExpenseWithCategory } from "@/lib/supabase/types-helper"
 
 interface ExpenseChartProps {
-  expenses: Expense[]
+  expenses: ExpenseWithCategory[]
 }
 
 export default function ExpenseChart({ expenses }: ExpenseChartProps) {
-  const dataMap: Record<string, number> = {}
+  const dataMap: Record<string, { total: number; color: string }> = {}
   expenses.forEach((e) => {
-    dataMap[e.category] = (dataMap[e.category] ?? 0) + e.amount
+    const label = e.categories.label
+    const color = e.categories.color
+    if (!dataMap[label]) dataMap[label] = { total: 0, color }
+    dataMap[label].total += e.amount
   })
 
-  const data = Object.entries(dataMap).map(([category, total]) => ({
-    name: category,
+  const data = Object.entries(dataMap).map(([name, { total, color }]) => ({
+    name,
     value: total,
-    color: getCategoryByLabel(category)?.color ?? "#6B7280",
+    color,
   }))
 
   if (data.length === 0) {
