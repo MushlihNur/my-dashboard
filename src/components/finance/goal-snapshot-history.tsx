@@ -8,6 +8,7 @@ import { useState } from "react";
 import ConfirmDialog from "../ui/confirm-dialog";
 import SnapshotFormDialog from "./snapshot-form-dialog";
 import { GoalSnapshot } from "@/lib/supabase/types-helper";
+import { notify } from "@/lib/toast";
 
 interface GoalSnapshotHistoryProps {
   snapshots: GoalSnapshot[]
@@ -52,10 +53,13 @@ export default function GoalSnapshotHistory({
     try {
       await onDeleteSnapshot(deletingId)
       setDeletingId(null)
+      notify.success("Snapshot deleted")
 
       const newTotal = sorted.length - 1
       const newMaxPage = Math.ceil(newTotal / PER_PAGE)
       if (page > newMaxPage) setPage(Math.max(1, newMaxPage))
+    } catch {
+      notify.error("Failed to delete snapshot")
     } finally {
       setDeleteLoading(false)
     }

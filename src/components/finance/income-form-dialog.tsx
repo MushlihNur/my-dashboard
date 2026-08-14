@@ -10,6 +10,7 @@ import FormInput from "../ui/form-input"
 import DatePicker from "../ui/date-picker"
 import { Button } from "../ui/button"
 import { Plus } from "lucide-react"
+import { notify } from "@/lib/toast"
 
 interface IncomeFormDialogProps {
   income?: IncomeWithCategory
@@ -88,9 +89,11 @@ export default function IncomeFormDialog({
         })
       }
       handleClose()
+      notify.success(isEdit ? "Income updated" : "Income added")
       onSuccess()
     } catch {
       setError("Failed to save income. Please try again.")
+      notify.error("Failed to save income")
     } finally {
       setLoading(false)
     }

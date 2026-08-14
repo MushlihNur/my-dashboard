@@ -9,6 +9,7 @@ import { Button } from "../ui/button"
 import { formatRupiah } from "@/lib/format"
 import FormInput from "../ui/form-input"
 import DatePicker from "../ui/date-picker"
+import { notify } from "@/lib/toast"
 
 interface SnapshotFormDialogProps {
   goalId?: string
@@ -81,9 +82,11 @@ export default function SnapshotFormDialog({
         })
       }
       handleClose()
+      notify.success(isEdit ? "Snapshot updated" : "Snapshot added")
       onSuccess()
     } catch {
       setError("Failed to save snapshot. Please try again.")
+      notify.error("Failed to save snapshot")
     } finally {
       setLoading(false)
     }

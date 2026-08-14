@@ -10,6 +10,7 @@ import DatePicker from "../ui/date-picker"
 import { Button } from "../ui/button"
 import { Plus } from "lucide-react"
 import { format } from "date-fns"
+import { notify } from "@/lib/toast"
 
 interface ExpenseFormDialogProps {
   expense?: ExpenseWithCategory
@@ -89,9 +90,11 @@ export default function ExpenseFormDialog({
         })
       }
       handleClose()
+      notify.success(isEdit ? "Transaction updated" : "Transaction added")
       onSuccess()
     } catch {
       setError("Failed to save transaction. Please try again.")
+      notify.error("Failed to save transaction")
     } finally {
       setLoading(false)
     }

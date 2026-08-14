@@ -8,6 +8,7 @@ import GoalFormDialog from "@/components/finance/goal-form-dialog";
 import { Goal } from "@/lib/supabase/types-helper";
 import { deleteGoal, getGoals, updateGoalSortOrder } from "@/lib/api/goals";
 import ConfirmDialog from "@/components/ui/confirm-dialog";
+import { notify } from "@/lib/toast";
 
 type StatusFilter = "all" | "ongoing" | "achieved" | "cancelled"
 
@@ -64,9 +65,11 @@ export default function GoalsPage() {
     try {
       await deleteGoal(deletingGoal?.id)
       setDeletingGoal(null)
+      notify.success("Goal deleted")
       fetchGoals()
     } catch {
       console.error("Failed to delete goal")
+      notify.error("Failed to delete goal")
     } finally {
       setDeleteLoading(false)
     }

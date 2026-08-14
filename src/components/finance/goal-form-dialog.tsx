@@ -8,6 +8,7 @@ import FormInput from "../ui/form-input";
 import DatePicker from "../ui/date-picker";
 import { Goal } from "@/lib/supabase/types-helper";
 import { addGoal, updateGoal } from "@/lib/api/goals";
+import { notify } from "@/lib/toast";
 
 interface GoalFormDialogProps {
   goal?: Goal
@@ -72,9 +73,11 @@ export default function GoalFormDialog({ goal, onSuccess }: GoalFormDialogProps)
         })
       }
       handleClose()
+      notify.success(isEdit ? "Goal updated" : "Goal added")
       onSuccess()
     } catch {
       setError("Failed to save goal. Please try again.")
+      notify.error("Failed to save goal")
     } finally {
       setLoading(false)
     }

@@ -9,6 +9,7 @@ import { deleteExpense } from "@/lib/api/expenses"
 import ExpenseFormDialog from "./expense-form-dialog"
 import { Pencil, Trash2 } from "lucide-react"
 import ConfirmDialog from "../ui/confirm-dialog"
+import { notify } from "@/lib/toast"
 
 interface ExpensesTableProps {
   expenses: ExpenseWithCategory[]
@@ -27,9 +28,11 @@ export default function ExpensesTable({ expenses, onSuccess }: ExpensesTableProp
     try {
       await deleteExpense(deletingExpense.id)
       setDeletingExpense(null)
+      notify.success("Transaction deleted")
       onSuccess()
     } catch {
       // handle error
+      notify.error("Failed to delete transaction")
     } finally {
       setDeleteLoading(false)
     }

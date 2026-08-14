@@ -9,6 +9,7 @@ import { deleteIncome } from "@/lib/api/income"
 import ConfirmDialog from "../ui/confirm-dialog"
 import { Pencil, Trash2 } from "lucide-react"
 import IncomeFormDialog from "./income-form-dialog"
+import { notify } from "@/lib/toast"
 
 interface IncomeTableProps {
   income: IncomeWithCategory[]
@@ -27,9 +28,11 @@ export default function IncomeTable({ income, onSuccess }: IncomeTableProps) {
     try {
       await deleteIncome(deletingIncome.id)
       setDeletingIncome(null)
+      notify.success("Income deleted")
       onSuccess()
     } catch {
       // handle dengan toast nanti
+      notify.error("Failed to delete income")
     } finally {
       setDeleteLoading(false)
     }
