@@ -5,16 +5,30 @@ import { getBudgetsByYear } from "@/lib/api/budget";
 import { getExpensesByYear } from "@/lib/api/expenses";
 import { getIncomeByYear } from "@/lib/api/income";
 import { ExpenseWithCategory, IncomeWithCategory, MonthlyBudget } from "@/lib/supabase/types-helper";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const AVAILABLE_YEARS = [2024, 2025, 2026]
 
 export default function SummaryPage() {
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const pathname = usePathname()
+
+  const yearParam = searchParams.get('year')
+  const selectedYear = yearParam ? parseInt(yearParam, 10) : new Date().getFullYear()
+
   const [expenses, setExpenses] = useState<ExpenseWithCategory[]>([])
   const [income, setIncome] = useState<IncomeWithCategory[]>([])
   const [budgets, setBudgets] = useState<MonthlyBudget[]>([])
   const [loading, setLoading] = useState(true)
+
+  const handleYearChange = (newYear: number) => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set('year', newYear.toString())
+    
+    router.push(`${pathname}?${params.toString()}`, { scroll: false })
+  }
 
   useEffect(() => {
     async function fetchAll() {
@@ -44,7 +58,7 @@ export default function SummaryPage() {
         {AVAILABLE_YEARS.map((year) => (
           <button
             key={year}
-            onClick={() => setSelectedYear(year)}
+            onClick={() => handleYearChange(year)}
             className={`px-4 py-1.5 rounded-lg text-sm font-medium transition cursor-pointer ${
               selectedYear === year
                 ? "bg-c3 text-white"

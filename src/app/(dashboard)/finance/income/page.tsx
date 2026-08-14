@@ -7,18 +7,27 @@ import { getCategoriesByType } from "@/lib/api/categories";
 import { getIncome } from "@/lib/api/income";
 import { Category, IncomeWithCategory } from "@/lib/supabase/types-helper";
 import { endOfMonth, format, startOfMonth } from "date-fns";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 
 const today = new Date()
-const defaultRange: DateRange = {
-  from: startOfMonth(today),
-  to: endOfMonth(today),
-}
 
 export default function IncomePage() {
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(defaultRange)
-  const [selectedCategory, setSelectedCategory] = useState<string>("")
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const pathname = usePathname()
+
+  const fromParam = searchParams.get("from")
+  const toParam = searchParams.get("to")
+  const categoryParam = searchParams.get("category") || ""
+
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: fromParam ? new Date(fromParam) : startOfMonth(today),
+    to: toParam ? new Date(toParam) : endOfMonth(today),
+  })
+  const [selectedCategory, setSelectedCategory] = useState<string>(categoryParam)
+
   const [income, setIncome] = useState<IncomeWithCategory[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
@@ -53,6 +62,39 @@ export default function IncomePage() {
     fetchIncome()
   }, [fetchIncome])
 
+  const handleDateChange = (range: DateRange | undefined) => {
+    setDateRange(range)
+
+    const params = new URLSearchParams(searchParams.toString())
+
+    if (range?.from) {
+      params.set("from", format(range.from, "yyyy-MM-dd"))
+    } else {
+      params.delete("from")
+    }
+
+    if (range?.to) {
+      params.set("to", format(range.to, "yyyy-MM-dd"))
+    } else {
+      params.delete("to")
+    }
+
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+  }
+
+  const handleCategoryChange = (val: string) => {
+    setSelectedCategory(val)
+    
+    const params = new URLSearchParams(searchParams.toString())
+    if (val) {
+      params.set("category", val)
+    } else {
+      params.delete("category")
+    }
+    
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+  }
+
   const filtered = selectedCategory
     ? income.filter((i) => i.category_id === selectedCategory)
     : income
@@ -63,13 +105,13 @@ export default function IncomePage() {
         <div className="flex items-center gap-3">
           <DateRangePicker
             value={dateRange}
-            onChange={setDateRange}
+            onChange={handleDateChange}
             className="w-64"
           />
 
           <select
             value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
+            onChange={(e) => handleCategoryChange(e.target.value)}
             className="px-3 py-1.5 text-sm border border-c4 rounded-lg outline-none focus:ring-2 focus:ring-c3 bg-white text-c3 cursor-pointer"
           >
             <option value="">All Categories</option>
