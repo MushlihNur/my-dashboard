@@ -140,7 +140,7 @@ export default function GoalDetailPage() {
           snapshots={snapshots} 
           targetAmount={goal.target_amount} 
           deadline={goal.deadline} 
-          status={goal.status ?? "ongoing"} 
+          status={(goal.status as "ongoing" | "achieved" | "cancelled") ?? "ongoing"}
         />
         <GoalSnapshotHistory
           snapshots={snapshots} 
