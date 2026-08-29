@@ -62,7 +62,7 @@ export default function GoalFormDialog({ goal, onSuccess }: GoalFormDialogProps)
           icon,
           target_amount: Number(targetAmount),
           deadline,
-          status,
+          status: status ?? undefined,
         })
       } else {
         await addGoal({

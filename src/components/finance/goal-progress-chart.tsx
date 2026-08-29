@@ -58,7 +58,7 @@ export default function GoalProgressChart({ snapshots, targetAmount, deadline, s
   const lastActual = sorted[sorted.length - 1]
   const lastActualLabel = format(parseISO(lastActual.date), "MMM yy")
   const projectedAtLastActual = chartData.find((d) => d.date === lastActualLabel)?.projected
-  const isOnTrack = status === "ongoing" && projectedAtLastActual !== undefined
+  const isOnTrack = status === "ongoing" && projectedAtLastActual !== undefined && projectedAtLastActual !== null
     ? lastActual.amount >= projectedAtLastActual
     : null
 
@@ -98,8 +98,8 @@ export default function GoalProgressChart({ snapshots, targetAmount, deadline, s
             width={35}
           />
           <Tooltip
-            formatter={(value: number, name: string) => [
-              formatRupiah(value),
+            formatter={(value, name) => [
+              formatRupiah(Number(value)),
               name === "actual" ? "Actual" : "Projected",
             ]}
             contentStyle={{
@@ -161,7 +161,6 @@ export default function GoalProgressChart({ snapshots, targetAmount, deadline, s
             stroke="#D9D9D9"
             fill="#F8FAFC"
             travellerWidth={6}
-            tick={{ fontSize: 9, fill: "#394867" }}
           />
         </LineChart>
       </ResponsiveContainer>

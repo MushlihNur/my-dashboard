@@ -64,7 +64,7 @@ export default function DatePicker({
             onSelect={handleSelect}
             captionLayout="dropdown"
             defaultMonth={selected ?? today}
-            initialFocus
+            autoFocus
             startMonth={new Date(currentYear - 100, 0)}
             endMonth={new Date(currentYear + 100, 11)}
             classNames={{

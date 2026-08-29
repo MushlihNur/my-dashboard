@@ -10,7 +10,7 @@ interface RecentTransactionsProps {
 
 export default function RecentTransactions({ expenses }: RecentTransactionsProps) {
   const recent = [...expenses]
-    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .sort((a, b) => new Date(b.created_at!).getTime() - new Date(a.created_at!).getTime())
     .slice(0, 5)
 
   return (

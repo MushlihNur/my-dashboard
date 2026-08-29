@@ -75,7 +75,7 @@ export default function SnapshotFormDialog({
         })
       } else {
         await addGoalSnapshot({
-          goal_id: goalId,
+          goal_id: goalId!,
           amount: Number(amount),
           date,
           note: note || undefined,

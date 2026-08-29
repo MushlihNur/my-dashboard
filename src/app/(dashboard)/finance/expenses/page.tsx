@@ -1,7 +1,7 @@
 "use client"
 
 import ExpensesTable from "@/components/finance/expenses-table";
-import { useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { endOfMonth, format, startOfMonth } from "date-fns";
 import DateRangePicker from "@/components/ui/date-range-picker";
@@ -13,7 +13,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const today = new Date()
 
-export default function ExpensesPage() {
+function ExpensesContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
@@ -136,5 +136,13 @@ export default function ExpensesPage() {
         <ExpensesTable expenses={filtered} onSuccess={fetchExpenses} />
       )}
     </div>
+  )
+}
+
+export default function ExpensesPage() {
+  return (
+    <Suspense fallback={<div className="text-center py-12 text-sm text-c2">Loading...</div>}>
+      <ExpensesContent />
+    </Suspense>
   )
 }
