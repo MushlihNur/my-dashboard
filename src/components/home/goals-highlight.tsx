@@ -19,7 +19,7 @@ export default function GoalsHighlight() {
 
       const topGoals = data
         .filter((g) => g.status === "ongoing")
-        .sort((a, b) => a.sort_order - b.sort_order)
+        .sort((a, b) => a.sort_order! - b.sort_order!)
         .slice(0, 3)
 
       const goalsWithSnapshots = await Promise.all(
@@ -46,8 +46,6 @@ export default function GoalsHighlight() {
   useEffect(() => {
     fetchGoalsData()
   }, [fetchGoalsData])
-
-  console.log({goals})
 
   return (
     <div className="flex flex-col gap-4">

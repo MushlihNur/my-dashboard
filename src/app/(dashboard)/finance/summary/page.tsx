@@ -6,11 +6,11 @@ import { getExpensesByYear } from "@/lib/api/expenses";
 import { getIncomeByYear } from "@/lib/api/income";
 import { ExpenseWithCategory, IncomeWithCategory, MonthlyBudget } from "@/lib/supabase/types-helper";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
 const AVAILABLE_YEARS = [2024, 2025, 2026]
 
-export default function SummaryPage() {
+function SummaryContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
@@ -82,4 +82,12 @@ export default function SummaryPage() {
       )}
     </div>
   )
+}
+
+export default function SummaryPage() {
+ return (
+    <Suspense fallback={<div className="text-center py-12 text-sm text-c2">Loading...</div>}>
+      <SummaryContent />
+    </Suspense>
+  ) 
 }

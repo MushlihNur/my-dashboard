@@ -8,12 +8,12 @@ import { getIncome } from "@/lib/api/income";
 import { Category, IncomeWithCategory } from "@/lib/supabase/types-helper";
 import { endOfMonth, format, startOfMonth } from "date-fns";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 
 const today = new Date()
 
-export default function IncomePage() {
+function IncomeContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
@@ -137,4 +137,10 @@ export default function IncomePage() {
       )}
     </div>
   )
+}
+
+export default function IncomePage() {
+  <Suspense fallback={<div className="text-center py-12 text-sm text-c2">Loading...</div>}>
+    <IncomeContent />
+  </Suspense>
 }
