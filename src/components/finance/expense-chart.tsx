@@ -50,7 +50,7 @@ export default function ExpenseChart({ expenses }: ExpenseChartProps) {
             ))}
           </Pie>
           <Tooltip
-            formatter={(value: number) => formatRupiah(value)}
+            formatter={(value) => formatRupiah(Number(value))}
             contentStyle={{
               fontSize: "12px",
               borderRadius: "8px",
