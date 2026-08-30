@@ -140,7 +140,9 @@ function IncomeContent() {
 }
 
 export default function IncomePage() {
-  <Suspense fallback={<div className="text-center py-12 text-sm text-c2">Loading...</div>}>
-    <IncomeContent />
-  </Suspense>
+  return (
+    <Suspense fallback={<div className="text-center py-12 text-sm text-c2">Loading...</div>}>
+      <IncomeContent />
+    </Suspense>
+  )
 }
