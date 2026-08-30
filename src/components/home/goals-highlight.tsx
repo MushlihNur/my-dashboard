@@ -59,6 +59,10 @@ export default function GoalsHighlight() {
       <div className="flex flex-col gap-3">
         {loading ? (
           <div className="text-center py-12 text-sm text-c2">Loading...</div>
+        ) : goals.length === 0 ? (
+          <div className="bg-white rounded-xl border border-c4 py-10 flex flex-col items-center justify-center">
+            <p className="text-xs text-c2">No active goals yet.</p>
+          </div>
         ) : (
           goals.map((goal) => {
             const current = goal.goal_snapshots?.amount ?? 0
