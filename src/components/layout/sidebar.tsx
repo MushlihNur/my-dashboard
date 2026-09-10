@@ -1,10 +1,11 @@
 "use client"
 
-import { FileText, LayoutDashboard, Menu, User, Users, Wallet, X } from "lucide-react"
+import { FileText, LayoutDashboard, LogOut, Menu, User, Users, Wallet, X } from "lucide-react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { useState } from "react"
+import { createClient } from "@/lib/supabase/client"
 
 const navItems = [
   { label: "Home", href: "/", icon: LayoutDashboard },
@@ -15,10 +16,17 @@ const navItems = [
 ]
 
 export default function Sidebar() {
+  const router = useRouter()
   const pathname = usePathname()
 
   const [isOpen, setIsOpen] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(false)
+
+  async function handleLogout() {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    router.push("/login")
+  }
 
   return (
     <>
@@ -110,10 +118,25 @@ export default function Sidebar() {
 
         {/* Footer */}
         {!isCollapsed && (
-          <div className="px-4 py-4 border-t border-c2">
-            <p className="text-xs text-slate-500">
-              Mushlih © 2026
-            </p>
+          <div className="px-4 py-4 border-t border-c2 flex items-center justify-between">
+            <p className="text-xs text-slate-500">Mushlih © 2026</p>
+            <button
+              onClick={handleLogout}
+              className="text-slate-400 hover:text-red-400 transition cursor-pointer p-1.5 rounded-lg hover:bg-c2"
+            >
+              <LogOut size={14} />
+            </button>
+          </div>
+        )}
+
+        {isCollapsed && (
+          <div className="px-4 py-4 border-t border-c2 flex justify-center">
+            <button
+              onClick={handleLogout}
+              className="text-slate-400 hover:text-red-400 transition cursor-pointer p-1.5 rounded-lg hover:bg-c2"
+            >
+              <LogOut size={14} />
+            </button>
           </div>
         )}
       </aside>
