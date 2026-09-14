@@ -102,7 +102,7 @@ function IncomeContent() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center gap-3 flex-wrap justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col items-start md:flex-row md:items-start gap-3">
           <DateRangePicker
             value={dateRange}
             onChange={handleDateChange}
@@ -112,7 +112,7 @@ function IncomeContent() {
           <select
             value={selectedCategory}
             onChange={(e) => handleCategoryChange(e.target.value)}
-            className="px-3 py-1.5 text-sm border border-c4 rounded-lg outline-none focus:ring-2 focus:ring-c3 bg-white text-c3 cursor-pointer"
+            className="py-1.5 text-sm border border-c4 rounded-lg outline-none focus:ring-2 focus:ring-c3 bg-white text-c3 cursor-pointer"
           >
             <option value="">All Categories</option>
             {categories.map((cat) => (

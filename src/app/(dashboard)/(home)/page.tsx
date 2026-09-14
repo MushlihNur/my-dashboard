@@ -7,7 +7,8 @@ import QuickActions from "@/components/home/quick-actions"
 import { getBudget } from "@/lib/api/budget"
 import { getExpenses } from "@/lib/api/expenses"
 import { getIncome } from "@/lib/api/income"
-import { ExpenseWithCategory, IncomeWithCategory, MonthlyBudget } from "@/lib/supabase/types-helper"
+import { getProfile } from "@/lib/api/profile"
+import { ExpenseWithCategory, IncomeWithCategory, MonthlyBudget, Profile } from "@/lib/supabase/types-helper"
 import { endOfMonth, format, startOfMonth } from "date-fns"
 import { useCallback, useEffect, useState } from "react"
 
@@ -21,13 +22,14 @@ export default function HomePage() {
   const [expenses, setExpenses] = useState<ExpenseWithCategory[]>([])
   const [income, setIncome] = useState<IncomeWithCategory[]>([])
   const [budget, setBudget] = useState<MonthlyBudget | null>(null)
+  const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
 
   const fetchAll = useCallback(async () => {
     setLoading(true)
 
     try {
-      const [incomeData, expensesData, budgetData] = await Promise.all([
+      const [incomeData, expensesData, budgetData, profileData] = await Promise.all([
         getIncome(
           format(monthStart, "yyyy-MM-dd"),
           format(monthEnd, "yyyy-MM-dd")
@@ -37,10 +39,12 @@ export default function HomePage() {
           format(monthEnd, "yyyy-MM-dd")
         ),
         getBudget(currentYear, currentMonth),
+        getProfile(),
       ])
       setIncome(incomeData)
       setExpenses(expensesData)
       setBudget(budgetData)
+      setProfile(profileData?.profile)
     }catch {
       console.error("Failed to load expenses")
     } finally {
@@ -54,7 +58,7 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <Greeting />
+      <Greeting name={profile?.name ?? ""} />
       
       <QuickActions onSuccess={fetchAll} />
 

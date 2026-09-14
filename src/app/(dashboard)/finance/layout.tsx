@@ -1,4 +1,7 @@
 import FinanceNav from "@/components/finance/finance-nav"
+import { Metadata } from "next"
+
+export const metadata: Metadata = { title: "Finance | My Dashboard" }
 
 export default function FinanceLayout({
   children,
