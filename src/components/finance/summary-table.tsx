@@ -57,7 +57,7 @@ export default function SummaryTable({ expenses, income, budgets, year }: Summar
                   {m}
                 </th>
               ))}
-              <th className="sticky right-0 top-0 z-30 bg-slate-50 border-b border-c4 px-3 py-3 text-right text-xs font-medium text-c2">
+              <th className="md:sticky right-0 top-0 z-30 bg-slate-50 border-b border-c4 px-3 py-3 text-right text-xs font-medium text-c2">
                 Total
               </th>
             </tr>
@@ -71,7 +71,7 @@ export default function SummaryTable({ expenses, income, budgets, year }: Summar
               {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
                 <td key={m} className="bg-slate-100 border-b border-c4" />
               ))}
-              <td className="sticky right-0 bg-slate-100 border-b border-c4" />
+              <td className="md:sticky right-0 bg-slate-100 border-b border-c4" />
             </tr>
 
             {incomeCategories.map((cat) => (
@@ -84,7 +84,7 @@ export default function SummaryTable({ expenses, income, budgets, year }: Summar
                 ))}
                 <Cell
                   amount={Object.values(incomeAgg[cat]).reduce((s, v) => s + v, 0)}
-                  className="sticky right-0 bg-white text-green-600 font-medium border-b border-c4/50"
+                  className="md:sticky right-0 bg-white text-green-600 font-medium border-b border-c4/50"
                 />
               </tr>
             ))}
@@ -98,7 +98,7 @@ export default function SummaryTable({ expenses, income, budgets, year }: Summar
                   {totalIncomePerMonth[m] ? formatRupiah(totalIncomePerMonth[m]) : <span className="text-slate-300">—</span>}
                 </td>
               ))}
-              <td className="sticky right-0 bg-green-50 px-3 py-2 text-right text-xs font-semibold text-green-700 border-b-2 border-c4">
+              <td className="md:sticky right-0 bg-green-50 px-3 py-2 text-right text-xs font-semibold text-green-700 border-b-2 border-c4">
                 {formatRupiah(totalIncomeGrand)}
               </td>
             </tr>
@@ -115,7 +115,7 @@ export default function SummaryTable({ expenses, income, budgets, year }: Summar
                   </td>
                 )
               })}
-              <td className="sticky right-0 bg-slate-50 px-3 py-2 text-right text-xs border-b border-c4">—</td>
+              <td className="md:sticky right-0 bg-slate-50 px-3 py-2 text-right text-xs border-b border-c4">—</td>
             </tr>
 
             <tr className="hover:bg-slate-50 transition group">
@@ -125,7 +125,7 @@ export default function SummaryTable({ expenses, income, budgets, year }: Summar
               {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
                 <td key={m} className="bg-slate-100 border-b border-c4" />
               ))}
-              <td className="sticky right-0 bg-slate-100 border-b border-c4" />
+              <td className="md:sticky right-0 bg-slate-100 border-b border-c4" />
             </tr>
 
             {expenseCategories.map((cat) => (
@@ -138,7 +138,7 @@ export default function SummaryTable({ expenses, income, budgets, year }: Summar
                 ))}
                 <Cell
                   amount={Object.values(expenseAgg[cat]).reduce((s, v) => s + v, 0)}
-                  className="sticky right-0 bg-white font-medium border-b border-c4/50"
+                  className="md:sticky right-0 bg-white font-medium border-b border-c4/50"
                 />
               </tr>
             ))}
@@ -152,7 +152,7 @@ export default function SummaryTable({ expenses, income, budgets, year }: Summar
                   {totalExpensePerMonth[m] ? formatRupiah(totalExpensePerMonth[m]) : <span className="text-slate-300">—</span>}
                 </td>
               ))}
-              <td className="sticky right-0 bg-red-50 px-3 py-2 text-right text-xs font-semibold text-red-600 border-b-2 border-c4">
+              <td className="md:sticky right-0 bg-red-50 px-3 py-2 text-right text-xs font-semibold text-red-600 border-b-2 border-c4">
                 {formatRupiah(totalExpenseGrand)}
               </td>
             </tr>
@@ -178,7 +178,7 @@ export default function SummaryTable({ expenses, income, budgets, year }: Summar
               })}
               <td
                 className={cn(
-                  "sticky right-0 bg-slate-50 px-3 py-2 text-right text-xs font-semibold",
+                  "md:sticky right-0 bg-slate-50 px-3 py-2 text-right text-xs font-semibold",
                   totalIncomeGrand - totalExpenseGrand >= 0
                     ? "text-green-600"
                     : "text-red-500"
