@@ -16,6 +16,7 @@ export async function getExpenses(from: string, to: string): Promise<ExpenseWith
     .gte("date", from)
     .lte("date", to)
     .order("date", {ascending: false})
+    .order("created_at", {ascending: false})
 
   if (error) throw error
   return data as ExpenseWithCategory[]
