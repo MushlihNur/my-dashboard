@@ -126,6 +126,7 @@ export default function SnapshotFormDialog({
 
           <FormInput
             label={isEdit ? "Amount" : "New Amount"}
+            type="number"
             placeholder="16.000.000"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}

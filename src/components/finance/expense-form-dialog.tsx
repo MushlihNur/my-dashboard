@@ -125,6 +125,7 @@ export default function ExpenseFormDialog({
 
         <FormInput
           label="Amount"
+          type="number"
           placeholder="60.000"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
