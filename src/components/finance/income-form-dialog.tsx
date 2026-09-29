@@ -124,6 +124,7 @@ export default function IncomeFormDialog({
 
         <FormInput
           label="Amount"
+          type="number"
           placeholder="7.500.000"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}

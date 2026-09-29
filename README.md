@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# My Dashboard
 
-## Getting Started
+A personal and family dashboard to manage finances, track goals, and store important information - built as a portfolio project.
 
-First, run the development server:
+🔗 **[Live Demo](https://my-dashboard-demo-rosy.vercel.app/)**
 
+## 🔐 Demo Credentials
+Email: guest@demo.com
+
+Password: demo123
+
+## ✨ Features
+- **Home** — monthly finance snapshot and top goals overview
+- **Finance**
+  - Track monthly expenses and income with category breakdown
+  - Set monthly spending limits
+  - Financial goals with progress tracking and snapshot history
+  - Yearly summary report across all categories
+- **Profile** — manage personal information and account settings
+- **Family** *(coming soon)*
+- **Documents** *(coming soon)*
+
+## 🛠 Tech Stack
+| Layer      | Technology                          |
+|------------|-------------------------------------|
+| Frontend   | Next.js 16 (App Router), TypeScript |
+| Styling    | Tailwind CSS, shadcn/ui             |
+| Backend    | Next.js API Routes, Supabase        |
+| Database   | PostgreSQL (Supabase)               |
+| Auth       | Supabase Auth                       |
+| Charts     | Recharts                            |
+| Drag & Drop| dnd-kit                             |
+| Deployment | Vercel                              |
+
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 18+
+- pnpm
+- Supabase account
+
+### Installation
+
+1. Clone the repo
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+   git clone https://github.com/MushlihNur/my-dashboard.git
+   cd my-dashboard
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies
+```bash
+   pnpm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Setup environment variables
+```bash
+   cp .env.example .env.local
+```
+      Fill in your Supabase credentials:
+```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Run the development server
+```bash
+   pnpm dev
+```
 
-## Learn More
+5. Open [http://localhost:3000](http://localhost:3000)
 
-To learn more about Next.js, take a look at the following resources:
+### Database Setup
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Link your Supabase project
+```bash
+   pnpm supabase link --project-ref your-project-ref
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. Run migrations
+```bash
+   pnpm supabase db push
+```
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   Or manually run the SQL files in `supabase/migrations/` via Supabase SQL Editor in order.

@@ -34,13 +34,13 @@ export default function ExpenseChart({ expenses }: ExpenseChartProps) {
   return (
     <div className="bg-white rounded-xl border border-c4 p-6">
       <h3 className="text-sm font-medium text-c3 mb-4">Expenses by Category</h3>
-      <ResponsiveContainer width="100%" height={260}>
+      <ResponsiveContainer width="100%" height={280}>
         <PieChart>
           <Pie
             data={data}
             cx="50%"
             cy="50%"
-            innerRadius={60}
+            innerRadius={50}
             outerRadius={100}
             paddingAngle={2}
             dataKey="value"
