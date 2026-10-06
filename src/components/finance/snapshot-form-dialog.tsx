@@ -84,9 +84,14 @@ export default function SnapshotFormDialog({
       handleClose()
       notify.success(isEdit ? "Snapshot updated" : "Snapshot added")
       onSuccess()
-    } catch {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : ""
       setError("Failed to save snapshot. Please try again.")
-      notify.error("Failed to save snapshot")
+      if (message.includes("Demo limit reached")) {
+        notify.error("Demo limit reached. Cannot add more data in demo mode.")
+      } else {
+        notify.error("Failed to save snapshot")
+      }
     } finally {
       setLoading(false)
     }
