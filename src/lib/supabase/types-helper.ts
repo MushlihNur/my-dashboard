@@ -7,6 +7,7 @@ export type Income = Tables<"income">
 export type Goal = Tables<"goals">
 export type GoalSnapshot = Tables<"goal_snapshots">
 export type MonthlyBudget = Tables<"monthly_budgets">
+export type FamilyMember = Tables<"family_members">
 
 export type ExpenseWithCategory = Expense & {
   categories: Pick<Category, "label" | "color">
