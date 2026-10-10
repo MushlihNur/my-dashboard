@@ -92,9 +92,14 @@ export default function ExpenseFormDialog({
       handleClose()
       notify.success(isEdit ? "Transaction updated" : "Transaction added")
       onSuccess()
-    } catch {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : ""
       setError("Failed to save transaction. Please try again.")
-      notify.error("Failed to save transaction")
+      if (message.includes("Demo limit reached")) {
+        notify.error("Demo limit reached. Cannot add more data in demo mode.")
+      } else {
+        notify.error("Failed to save transaction")
+      }
     } finally {
       setLoading(false)
     }

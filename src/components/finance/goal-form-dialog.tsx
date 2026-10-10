@@ -75,9 +75,14 @@ export default function GoalFormDialog({ goal, onSuccess }: GoalFormDialogProps)
       handleClose()
       notify.success(isEdit ? "Goal updated" : "Goal added")
       onSuccess()
-    } catch {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : ""
       setError("Failed to save goal. Please try again.")
-      notify.error("Failed to save goal")
+      if (message.includes("Demo limit reached")) {
+        notify.error("Demo limit reached. Cannot add more data in demo mode.")
+      } else {
+        notify.error("Failed to save goal")
+      }
     } finally {
       setLoading(false)
     }

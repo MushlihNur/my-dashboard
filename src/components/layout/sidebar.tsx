@@ -32,7 +32,7 @@ export default function Sidebar() {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-c3 text-white"
+        className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-c3 text-white hover:cursor-pointer"
       >
         <Menu size={20} />
       </button>
@@ -69,7 +69,7 @@ export default function Sidebar() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setIsCollapsed(!isCollapsed)}
-              className="hidden md:block text-white"
+              className="hidden md:block text-white hover:cursor-pointer"
             >
               <Menu size={18} />
             </button>

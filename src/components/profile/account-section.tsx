@@ -11,6 +11,8 @@ interface AccountSectionProps {
   onSuccess: () => void
 }
 
+const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === "true"
+
 export default function AccountSection({email, onSuccess}: AccountSectionProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [newPass, setNewPass] = useState("")
@@ -45,7 +47,7 @@ export default function AccountSection({email, onSuccess}: AccountSectionProps) 
     <div className="bg-white rounded-xl border border-c4 overflow-hidden">
       <div className="px-6 py-4 border-b border-c4 flex items-center justify-between">
         <h2 className="text-sm font-semibold text-c3">Account</h2>
-        {!isEditing && (
+        {!isEditing && !isDemoMode && (
           <Button
             variant="outline"
             size="sm"
@@ -54,6 +56,10 @@ export default function AccountSection({email, onSuccess}: AccountSectionProps) 
           >
             Change Password
           </Button>
+        )}
+
+        {!isEditing && isDemoMode && (
+          <span className="text-xs text-slate-400">Password change disabled in demo</span>
         )}
       </div>
 
