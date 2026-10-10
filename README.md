@@ -44,28 +44,28 @@ Password: demo123
 
 1. Clone the repo
 ```bash
-   git clone https://github.com/MushlihNur/my-dashboard.git
-   cd my-dashboard
+git clone https://github.com/MushlihNur/my-dashboard.git
+cd my-dashboard
 ```
 
 2. Install dependencies
 ```bash
-   pnpm install
+pnpm install
 ```
 
 3. Setup environment variables
 ```bash
-   cp .env.example .env.local
+cp .env.example .env.local
 ```
-      Fill in your Supabase credentials:
+Fill in your Supabase credentials:
 ```env
-   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
 4. Run the development server
 ```bash
-   pnpm dev
+pnpm dev
 ```
 
 5. Open [http://localhost:3000](http://localhost:3000)
@@ -74,12 +74,12 @@ Password: demo123
 
 1. Link your Supabase project
 ```bash
-   pnpm supabase link --project-ref your-project-ref
+pnpm supabase link --project-ref your-project-ref
 ```
 
 2. Run migrations
 ```bash
-   pnpm supabase db push
+pnpm supabase db push
 ```
 
    Or manually run the SQL files in `supabase/migrations/` via Supabase SQL Editor in order.
