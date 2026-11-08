@@ -8,6 +8,8 @@ export type Goal = Tables<"goals">
 export type GoalSnapshot = Tables<"goal_snapshots">
 export type MonthlyBudget = Tables<"monthly_budgets">
 export type FamilyMember = Tables<"family_members">
+export type Document = Tables<"documents">
+export type DocumentShare = Tables<"document_shares">
 
 export type ExpenseWithCategory = Expense & {
   categories: Pick<Category, "label" | "color">
@@ -20,3 +22,5 @@ export type IncomeWithCategory = Income & {
 export type GoalWithSnapshot = Goal & {
   goal_snapshots: Pick<GoalSnapshot, "amount">
 }
+
+export type DocumentWithSignedUrl = Document & { signed_url?: string }

@@ -1,4 +1,4 @@
-interface FormInputProps {
+interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string
   type?: string
   placeholder?: string
@@ -13,6 +13,7 @@ export default function FormInput({
   value,
   onChange,
   formatNumber = false,
+  ...props
 }: FormInputProps) {
 
   function formatDisplay(val: string): string {
@@ -49,6 +50,7 @@ export default function FormInput({
         value={displayValue}
         onChange={handleChange}
         className="w-full px-3 py-2 text-sm border border-c4 rounded-lg outline-none focus:ring-2 focus:ring-c3 focus:border-transparent transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        {...props}
       />
     </div>
   )
