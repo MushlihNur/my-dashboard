@@ -14,7 +14,7 @@ interface DocumentFormDialogProps {
   document?: DocumentWithSignedUrl
   open?: boolean
   onClose?: () => void
-  onSuccess?: () => void
+  onSuccess: () => void
 }
 
 export default function DocumentFormDialog({
@@ -30,7 +30,6 @@ export default function DocumentFormDialog({
 
   const [name, setName] = useState("")
   const [type, setType] = useState("")
-  const [otherType, setOtherType] = useState("")
   const [notes, setNotes] = useState("")
   const [expiredAt, setExpiredAt] = useState("")
   const [file, setFile] = useState<File | null>(null)

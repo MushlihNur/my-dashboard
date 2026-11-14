@@ -75,7 +75,7 @@ export async function addDocument(payload: {
   name: string
   notes?: string
   expired_at?: string
-  file: File
+  file?: File | null
 }): Promise<void> {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
