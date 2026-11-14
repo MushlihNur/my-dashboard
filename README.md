@@ -9,6 +9,8 @@ Email: guest@demo.com
 
 Password: demo123
 
+The demo account is read-only for Documents.
+
 ## ✨ Features
 - **Home** — monthly finance snapshot and top goals overview
 - **Finance**
@@ -17,8 +19,11 @@ Password: demo123
   - Financial goals with progress tracking and snapshot history
   - Yearly summary report across all categories
 - **Profile** — manage personal information and account settings
-- **Family** *(coming soon)*
-- **Documents** *(coming soon)*
+- **Family** — manage family members (profile details, blood type, contacts) with quick copy for NIK and phone
+- **Documents** — store important documents (images and PDFs) with expiry tracking
+  - Shareable links with recipient, purpose, and expiry date
+  - Shared files are watermarked on the server with recipient, purpose, access time, and link expiry
+  - Expired links stop working automatically
 
 ## 🛠 Tech Stack
 | Layer      | Technology                          |
@@ -31,6 +36,8 @@ Password: demo123
 | Charts     | Recharts                            |
 | Drag & Drop| dnd-kit                             |
 | Deployment | Vercel                              |
+| Storage    | Supabase Storage (private bucket)   |
+| File Processing | sharp, pdf-lib (server-side watermark) |
 
 
 ## 🚀 Getting Started
@@ -61,6 +68,7 @@ Fill in your Supabase credentials:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key   # server-only, never expose to the client
 ```
 
 4. Run the development server
@@ -83,3 +91,6 @@ pnpm supabase db push
 ```
 
    Or manually run the SQL files in `supabase/migrations/` via Supabase SQL Editor in order.
+
+3. Create a **private** Storage bucket named `documents` and add the storage policies
+   (insert/select/delete restricted to `auth.uid()` as the first folder name).

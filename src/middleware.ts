@@ -33,8 +33,10 @@ export async function middleware(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname
   const isLoginPage = pathname === "/login"
+  const isPublicShare = pathname.startsWith("/share") || pathname.startsWith("/api/share")
   const isStaticAsset = pathname.startsWith("/_next") || pathname.includes(".")
 
+  if (isPublicShare) return supabaseResponse
   if (isStaticAsset) return supabaseResponse
 
   if (!user && !isLoginPage) {

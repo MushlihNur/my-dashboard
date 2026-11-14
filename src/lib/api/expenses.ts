@@ -39,7 +39,6 @@ export async function addExpense(payload: {
       ...payload,
       user_id: user.id
     })
-  console.log({user, error})
   
   if (error) throw error
 }

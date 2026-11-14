@@ -39,35 +39,43 @@ src/
 ├── app/ # Next.js App Router
 │   ├── (auth)/login/ # Login page
 │   └── (dashboard)/ # Protected routes
-│       ├── (home)/ # Home page
-│       ├── finance/ # Finance module
-│       │   ├── expenses/
-│       │   ├── income/
-│       │   ├── summary/
-│       │   └── goals/[id]/
-│       ├── profile/
-│       ├── family/ # Coming soon
-│       └── documents/ # Coming soon
+│   │   ├── (home)/ # Home page
+│   │   ├── finance/ # Finance module
+│   │   │   ├── expenses/
+│   │   │   ├── income/
+│   │   │   ├── summary/
+│   │   │   └── goals/[id]/
+│   │   ├── profile/
+│   │   ├── family/
+│   │   └── documents/
+│   ├── share/[token]/ # Public share page (no auth)
+│   └── api/share/[token]/file/ # Watermarked file endpoint (public)
 ├── components/
 │   ├── finance/ # Finance-specific components
 │   ├── home  Home page components
+│   ├── family/ # Family member components
+│   ├── documents/ # Document + share components
 │   ├── profile/ # Profile components
 │   ├── layout/ # Sidebar, navigation
 │   └── ui/ # Generic reusable components
 └── lib/
     ├── api/ # Supabase query functions
-    │   ├── expenses.ts
-    │   ├── income.ts
-    │   ├── goals.ts
     │   ├── budget.ts
     │   ├── categories.ts
+    │   ├── documents.ts
+    │   ├── expenses.ts
+    │   ├── family.ts
+    │   ├── income.ts
+    │   ├── goals.ts
     │   └── profile.ts
     ├── mock/ # Mock data (development reference)
     ├── supabase/ # Supabase client & generated types
+    │   ├── admin.ts # Service-role client (server-only)
     │   ├── client.ts # Browser client
     │   ├── server.ts # Server client
     │   ├── types.ts # Generated types (pnpm supabase gen types)
     │   └── types-helper.ts # Derived helper types
+    ├── share.ts # Share token lookup + watermark text (server-only)
     ├── format.ts # formatRupiah, formatDate
     ├── summary.ts # aggregateByCategory, totalPerMonth, grandTotal
     └── toast.ts # notify.success, notify.error wrapper
@@ -88,6 +96,9 @@ src/
 | `monthly_budgets` | Monthly expense limits                         |
 | `goals`           | Financial goals                                |
 | `goal_snapshots`  | History current amount per goal per bulan      |
+| `family_members`  | Family member data (user_id = owner for now)   |
+| `documents`       | Document metadata; file_path points to Storage |
+| `document_shares` | Public share links (token, recipient, purpose, expiry) |
 
 ### Key Relations
 
@@ -97,9 +108,12 @@ profiles → expenses (1:many)
 profiles → income (1:many)
 profiles → monthly_budgets (1:many)
 profiles → goals (1:many)
+profiles → family_members (1:many)
+profiles → documents (1:many)
 goals → goal_snapshots (1:many)
 categories → expenses (1:many)
 categories → income (1:many)
+documents → document_shares (1:many)
 ```
 *Note: All tables have Row Level Security (RLS) enabled, filtering by profile_id or user ID to ensure data isolation between personal and demo accounts.*
 
@@ -178,6 +192,24 @@ All form dialogs use the **upsert pattern** — a single component handles both 
 
 ---
 
+## Documents & Sharing
+
+- Files live in the private `documents` bucket under `{user_id}/{uuid}.{ext}`.
+  Only `file_path` is stored; signed URLs are generated on read (1 hour).
+- Uploads are validated by magic bytes (JPG, PNG, WebP, PDF) and size (10 MB)
+  in `uploadValidatedFile` (`src/lib/api/documents.ts`). Client-side only for now;
+  move to a server route if other users can upload.
+- Share links: `/share/[token]` is public (excluded in middleware). The server looks up the
+  token with the service-role client (`src/lib/share.ts`), then
+  `/api/share/[token]/file` downloads the original from Storage and returns a watermarked copy
+  (sharp for images, pdf-lib for PDFs). The original file is never exposed to the recipient.
+- Expiry is stored as end of day (23:59:59). Expired links return 410 and an
+  "expired" page. Old links are not deleted automatically.
+- `service_role` needs explicit `GRANT SELECT` on `documents` and `document_shares`
+  (new tables are not auto-exposed).
+
+---
+
 ## Conventions
 
 ### Language
@@ -220,10 +252,11 @@ salary, other
 - Data migration scripts (CSV import, dev→prod)
 - Deploy: Vercel (personal + demo)
 - Database migrations (Supabase CLI)
+- Family — listing + detail + CRUD (education, health sections are placeholders)
+- Documents — upload, preview, expiry badges, CRUD
+- Document sharing — expiring links, server-side watermark, share history with edit expiry
 
 ### 🚧 In Progress / Coming Soon
-- Family — listing + family member details
-- Documents — save important documents + shareable link with expiry
 - Role management — owner can see everything, family members only see their own
 
 ### 💡 Planned
@@ -239,6 +272,7 @@ salary, other
 ```env
 NEXT_PUBLIC_SUPABASE_URL=        # Supabase project URL
 NEXT_PUBLIC_SUPABASE_ANON_KEY=   # Supabase anon/public key
+SUPABASE_SERVICE_ROLE_KEY=       # Service role key (server-only)
 ```
 
 ---
@@ -261,6 +295,9 @@ Personal and demo environments use **the same Supabase project** but different u
 - `src/lib/supabase/types.ts` — auto-generated; do not edit manually. Regenerate after a schema change
 - `src/lib/mock/` — mock data for development reference; not used in production
 - `sort_order` in goals is updated via an RPC function rather than a direct update, due to RLS constraints
+- `SUPABASE_SERVICE_ROLE_KEY` is server-only (no `NEXT_PUBLIC_` prefix). Never import
+  `src/lib/supabase/admin.ts` from a client component.
+- Watermark fonts depend on the server; verify rendering on the deployed environment.
 
 ---
 
