@@ -1,5 +1,5 @@
 import { formatWib, getShareByToken } from "@/lib/share";
-import { ShieldAlert } from "lucide-react";
+import { FileText, ShieldAlert } from "lucide-react";
 import { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Shared Document | My Dashboard" }
