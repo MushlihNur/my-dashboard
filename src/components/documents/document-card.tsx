@@ -1,5 +1,6 @@
 "use client"
 
+import { IS_DEMO } from "@/lib/demo"
 import { Document, DocumentWithSignedUrl } from "@/lib/supabase/types-helper"
 import { cn } from "@/lib/utils"
 import { addDays, format, isPast, isWithinInterval, parseISO } from "date-fns"
@@ -27,12 +28,14 @@ export default function DocumentCard({ document, onDelete }: DocumentCardProps) 
       expireSoon  ? "border-yellow-200" : 
       "border-c4 hover:border-c2"
     )}>
-      <button
-        onClick={(e) => { e.preventDefault(); onDelete() }}
-        className="absolute right-3 top-3 text-slate-300 hover:text-red-500 transition opacity-0 group-hover:opacity-100 z-10 p-1.5 rounded-lg hover:bg-red-50 cursor-pointer"
-      >
-        <Trash2 size={14} />
-      </button>
+      {!IS_DEMO && (
+        <button
+          onClick={(e) => { e.preventDefault(); onDelete() }}
+          className="absolute right-3 top-3 text-slate-300 hover:text-red-500 transition opacity-0 group-hover:opacity-100 z-10 p-1.5 rounded-lg hover:bg-red-50 cursor-pointer"
+        >
+          <Trash2 size={14} />
+        </button>
+      )}
 
       <Link href={`/documents/${document.id}`} className="block p-5">
         <div className="flex flex-col gap-3">

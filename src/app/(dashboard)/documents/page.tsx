@@ -4,6 +4,7 @@ import DocumentCard from "@/components/documents/document-card"
 import DocumentFormDialog from "@/components/documents/document-form-dialog"
 import ConfirmDialog from "@/components/ui/confirm-dialog"
 import { deleteDocument, getDocuments } from "@/lib/api/documents"
+import { IS_DEMO } from "@/lib/demo"
 import { Document, DocumentWithSignedUrl } from "@/lib/supabase/types-helper"
 import { notify } from "@/lib/toast"
 import { FolderOpen } from "lucide-react"
@@ -20,7 +21,6 @@ export default function DocumentsPage() {
     try {
       const data = await getDocuments()
       setDocuments(data)
-      console.log({data})
     } catch {
       console.error("Failed to fetch goals")
       notify.error("Failed to fetch goals")
@@ -41,8 +41,12 @@ export default function DocumentsPage() {
       notify.success("Document deleted")
       setDeletingDoc(null)
       fetchDocuments()
-    } catch {
-      notify.error("Failed to delete document")
+    } catch (err: unknown) {
+      notify.error(
+        err.message.includes("Demo mode") 
+          ? "Demo mode: documents are read-only"
+          : "Failed to delete document"
+      )
     } finally {
       setDeleteLoading(false)
     }
@@ -55,7 +59,7 @@ export default function DocumentsPage() {
           <h1 className="text-2xl font-semibold text-c3">Documents</h1>
           <p className="text-sm text-c2 mt-1">Store and manage your important documents</p>
         </div>
-        <DocumentFormDialog onSuccess={fetchDocuments} />
+        {!IS_DEMO && <DocumentFormDialog onSuccess={fetchDocuments} />}
       </div>
 
       {loading ? (

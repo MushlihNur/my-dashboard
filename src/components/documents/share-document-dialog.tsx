@@ -82,8 +82,12 @@ export default function ShareDocumentDialog({
       setGeneratedLink(link)
 
       onSuccess?.()
-    } catch {
-      notify.error("Failed to generate share link")
+    } catch (err: unknown) {
+      notify.error(
+        err.message.includes("Demo mode") 
+          ? "Demo mode: documents are read-only"
+          : "Failed to generate share link"
+      )
     } finally {
       setLoading(false)
     }
@@ -100,8 +104,12 @@ export default function ShareDocumentDialog({
       notify.success("Expiry updated")
 
       onSuccess?.()
-    } catch {
-      notify.error("Failed to update share link")
+    } catch (err: unknown) {
+      notify.error(
+        err.message.includes("Demo mode") 
+          ? "Demo mode: documents are read-only"
+          : "Failed to update share link"
+      )
     } finally {
       setLoading(false)
     }

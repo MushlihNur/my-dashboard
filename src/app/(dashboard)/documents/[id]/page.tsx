@@ -6,6 +6,7 @@ import ShareHistorySection from "@/components/documents/share-history-section"
 import { Button } from "@/components/ui/button"
 import ConfirmDialog from "@/components/ui/confirm-dialog"
 import { deleteDocument, getDocumentById } from "@/lib/api/documents"
+import { IS_DEMO } from "@/lib/demo"
 import { DocumentWithSignedUrl } from "@/lib/supabase/types-helper"
 import { notify } from "@/lib/toast"
 import { addDays, format, isPast, isWithinInterval, parseISO } from "date-fns"
@@ -41,7 +42,6 @@ export default function DocumentDetailPage() {
     try {
       const data = await getDocumentById(id)
       setDocument(data)
-      console.log({data})
     } catch {
       setNotFound2(true)
     } finally {
@@ -60,8 +60,12 @@ export default function DocumentDetailPage() {
       await deleteDocument(document.id)
       notify.success("Document deleted")
       router.push("/documents")
-    } catch {
-      notify.error("Failed to delete document")
+    } catch (err: unknown) {
+      notify.error(
+        err.message.includes("Demo mode") 
+          ? "Demo mode: documents are read-only"
+          : "Failed to delete document"
+      )
     } finally {
       setDeleteLoading(false)
     }
@@ -112,37 +116,39 @@ export default function DocumentDetailPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="cursor-pointer text-xs text-red-500 hover:text-red-600 hover:border-red-300"
-              onClick={() => setShowDelete(true)}
-            >
-              Delete
-            </Button>
-            <DocumentFormDialog
-              document={document}
-              open={isEditing}
-              onClose={() => setIsEditing(false)}
-              onSuccess={() => {
-                setIsEditing(false)
-                fetchDocument()
-              }}
-            />
-            <Button
-              size="sm"
-              className="cursor-pointer text-xs"
-              onClick={() => setIsEditing(true)}
-            >
-              Edit
-            </Button>
-            <ShareDocumentDialog
-              documentId={document.id}
-              documentName={document.name}
-              onSuccess={() => setShareRefresh(prev => prev + 1)}
-            />
-          </div>
+          {!IS_DEMO && (
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="cursor-pointer text-xs text-red-500 hover:text-red-600 hover:border-red-300"
+                onClick={() => setShowDelete(true)}
+              >
+                Delete
+              </Button>
+              <DocumentFormDialog
+                document={document}
+                open={isEditing}
+                onClose={() => setIsEditing(false)}
+                onSuccess={() => {
+                  setIsEditing(false)
+                  fetchDocument()
+                }}
+              />
+              <Button
+                size="sm"
+                className="cursor-pointer text-xs"
+                onClick={() => setIsEditing(true)}
+              >
+                Edit
+              </Button>
+              <ShareDocumentDialog
+                documentId={document.id}
+                documentName={document.name}
+                onSuccess={() => setShareRefresh(prev => prev + 1)}
+              />
+            </div>
+          )}
         </div>
       </div>
 
@@ -225,18 +231,6 @@ export default function DocumentDetailPage() {
         </div>
       </div>
 
-      {/* Share history — placeholder */}
-      {/* <div className="bg-white rounded-xl border border-c4 overflow-hidden opacity-60">
-        <div className="px-5 py-4 border-b border-c4 flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-c3">Share History</h3>
-          <span className="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
-            Coming Soon
-          </span>
-        </div>
-        <div className="px-5 py-8 text-center text-xs text-slate-400">
-          Shareable link feature is under development.
-        </div>
-      </div> */}
       <ShareHistorySection 
         documentId={document.id}
         documentName={document.name}

@@ -9,6 +9,7 @@ import { useCallback, useEffect, useState } from "react"
 import ShareDocumentDialog from "./share-document-dialog"
 import { Button } from "../ui/button"
 import { Check, Copy, Pencil } from "lucide-react"
+import { IS_DEMO } from "@/lib/demo"
 
 function CopyLinkButton({ token }: { token: string }) {
   const [copied, setCopied] = useState(false)
@@ -93,15 +94,17 @@ export default function ShareHistorySection({ documentId, documentName, refresh 
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-1">
-                    <Button 
-                      size="sm" 
-                      className="h-8 w-8 p-0" 
-                      onClick={() => setEditingShare(share)}
-                    >
-                      <Pencil size={12} />
-                    </Button>
-                  </div>
+                  {!IS_DEMO && (
+                    <div className="flex items-center gap-1">
+                      <Button 
+                        size="sm" 
+                        className="h-8 w-8 p-0" 
+                        onClick={() => setEditingShare(share)}
+                      >
+                        <Pencil size={12} />
+                      </Button>
+                    </div>
+                  )}
                 </div>
 
                 <p className="text-xs text-c2">{share.purpose}</p>
