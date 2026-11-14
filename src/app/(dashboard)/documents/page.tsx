@@ -42,8 +42,9 @@ export default function DocumentsPage() {
       setDeletingDoc(null)
       fetchDocuments()
     } catch (err: unknown) {
+      const error = err as Error;
       notify.error(
-        err.message.includes("Demo mode") 
+        error.message.includes("Demo mode") 
           ? "Demo mode: documents are read-only"
           : "Failed to delete document"
       )

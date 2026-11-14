@@ -61,8 +61,9 @@ export default function DocumentDetailPage() {
       notify.success("Document deleted")
       router.push("/documents")
     } catch (err: unknown) {
+      const error = err as Error;
       notify.error(
-        err.message.includes("Demo mode") 
+        error.message.includes("Demo mode") 
           ? "Demo mode: documents are read-only"
           : "Failed to delete document"
       )

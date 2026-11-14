@@ -106,8 +106,9 @@ export default function DocumentFormDialog({
       handleClose()
       onSuccess()
     } catch (err: unknown) {
+      const error = err as Error;
       notify.error(
-        err.message.includes("Demo mode") 
+        error.message.includes("Demo mode") 
           ? "Demo mode: documents are read-only"
           : "Failed to save document"
       )
