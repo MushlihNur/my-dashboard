@@ -1,5 +1,5 @@
 import { buildWatermarkLines, getShareByToken } from "@/lib/share"
-import sharp from "sharp"
+// import sharp from "sharp"
 import { PDFDocument, StandardFonts, degrees, rgb } from "pdf-lib"
 import { createAdminClient } from "@/lib/supabase/admin"
 import { NextResponse } from "next/server"
@@ -10,6 +10,7 @@ const escapeXml = (s: string) =>
 const toLatin = (s: string) => s.replace(/[^\x20-\x7E]/g, "?")
 
 async function watermarkImage(input: Buffer, lines: string[]) {
+  const sharp = (await import("sharp")).default
   const oriented = await sharp(input).rotate().toBuffer()
   const { width = 1000, height = 1000, format } = await sharp(oriented).metadata()
 
