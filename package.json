@@ -54,6 +54,10 @@
       "os": ["current", "linux"],
       "cpu": ["x64", "arm64"],
       "libc": ["glibc"]
+    },
+    "overrides": {
+      "keyv": "<6.0.0",
+      "cacheable": "<1.1.0"
     }
   }
 }
