@@ -34,7 +34,7 @@ async function watermarkImage(input: Buffer, lines: string[]) {
   const svg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
     <g transform="rotate(-30 ${width / 2} ${height / 2})"
        font-family="Arial, Helvetica, sans-serif" font-size="${fontSize}" font-weight="bold"
-       fill="#000" fill-opacity="0.22" stroke="#fff" stroke-opacity="0.35" stroke-width="${fontSize / 14}">
+       fill="#000" fill-opacity="0.25" stroke="#fff" stroke-opacity="0.35" stroke-width="${fontSize / 14}">
       ${cells.join("")}
     </g></svg>`
 
