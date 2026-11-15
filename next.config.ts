@@ -4,7 +4,10 @@ const nextConfig: NextConfig = {
   /* config options here */
   serverExternalPackages: ["sharp"],
   outputFileTracingIncludes: {
-    "/api/share/[token]/file": ["./node_modules/.pnpm/**/@img/sharp-libvips-linux-x64/**/*"],
+    "/**": [
+      "./node_modules/.pnpm/@img+sharp-libvips-linux-x64@*/node_modules/@img/sharp-libvips-linux-x64/**/*",
+      "./node_modules/.pnpm/@img+sharp-linux-x64@*/node_modules/@img/sharp-linux-x64/**/*",
+    ],
   },
 };
 
