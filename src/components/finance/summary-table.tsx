@@ -35,7 +35,7 @@ export default function SummaryTable({ expenses, income, budgets, year }: Summar
 
   return (
     <div className="bg-white rounded-xl border border-c4 overflow-hidden">
-      <div className="overflow-auto max-h-[600px] scrollbar-thin">
+      <div className="overflow-auto scrollbar-thin">
         <table className="table-fixed border-separate border-spacing-0 min-w-[1800px] text-sm">
           <colgroup>
             <col className="w-8 md:w-44" />
@@ -80,7 +80,7 @@ export default function SummaryTable({ expenses, income, budgets, year }: Summar
                   {cat}
                 </td>
                 {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-                  <Cell key={m} amount={incomeAgg[cat][m] ?? 0} className="text-green-600" />
+                  <Cell key={m} amount={incomeAgg[cat][m] ?? 0} className="text-green-600 border-b border-c4/50" />
                 ))}
                 <Cell
                   amount={Object.values(incomeAgg[cat]).reduce((s, v) => s + v, 0)}
