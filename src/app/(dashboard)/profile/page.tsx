@@ -19,7 +19,6 @@ export default function ProfilePage() {
       setProfile(profileData)
       setEmail(userEmail)
     } catch(err) {
-      console.error("Failed to fetch profile:", err)
       notify.error(`Failed to fetch profile: ${err}`)
     } finally {
       setLoading(false)

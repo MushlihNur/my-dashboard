@@ -5,6 +5,7 @@ import { getBudgetsByYear } from "@/lib/api/budget";
 import { getExpensesByYear } from "@/lib/api/expenses";
 import { getIncomeByYear } from "@/lib/api/income";
 import { ExpenseWithCategory, IncomeWithCategory, MonthlyBudget } from "@/lib/supabase/types-helper";
+import { notify } from "@/lib/toast";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 
@@ -42,8 +43,8 @@ function SummaryContent() {
         setExpenses(expensesData)
         setIncome(incomeData)
         setBudgets(budgetsData)
-      } catch (err) {
-        console.error("Failed to fetch summary data:", err)
+      } catch {
+        notify.error("Failed to fetch summary data")
       } finally {
         setLoading(false)
       }

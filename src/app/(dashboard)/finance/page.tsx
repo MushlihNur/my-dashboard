@@ -9,6 +9,7 @@ import { getExpenses } from "@/lib/api/expenses"
 import { getIncome } from "@/lib/api/income"
 import { formatRupiah } from "@/lib/format"
 import { ExpenseWithCategory, IncomeWithCategory, MonthlyBudget } from "@/lib/supabase/types-helper"
+import { notify } from "@/lib/toast"
 import { endOfMonth, format, startOfMonth } from "date-fns"
 import { useCallback, useEffect, useState } from "react"
 
@@ -41,8 +42,8 @@ export default function FinanceOverviewPage() {
       setExpenses(expensesData)
       setIncome(incomeData)
       setBudget(budgetData)
-    } catch (err) {
-      console.error("Failed to fetch overview data:", err)
+    } catch {
+      notify.error("Failed to fetch overview data")
     } finally {
       setLoading(false)
     }

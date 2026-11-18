@@ -25,7 +25,7 @@ export default function GoalsPage() {
       const data = await getGoals()
       setGoals(data)
     } catch {
-      console.error("Failed to fetch goals")
+      notify.error("Failed to fetch goals")
     } finally {
       setLoading(false)
     }
@@ -68,7 +68,6 @@ export default function GoalsPage() {
       notify.success("Goal deleted")
       fetchGoals()
     } catch {
-      console.error("Failed to delete goal")
       notify.error("Failed to delete goal")
     } finally {
       setDeleteLoading(false)

@@ -9,6 +9,7 @@ import { getExpenses } from "@/lib/api/expenses"
 import { getIncome } from "@/lib/api/income"
 import { getProfile } from "@/lib/api/profile"
 import { ExpenseWithCategory, IncomeWithCategory, MonthlyBudget, Profile } from "@/lib/supabase/types-helper"
+import { notify } from "@/lib/toast"
 import { endOfMonth, format, startOfMonth } from "date-fns"
 import { useCallback, useEffect, useState } from "react"
 
@@ -46,7 +47,7 @@ export default function HomePage() {
       setBudget(budgetData)
       setProfile(profileData?.profile)
     }catch {
-      console.error("Failed to load expenses")
+      notify.error("Failed to load expenses")
     } finally {
       setLoading(false)
     }

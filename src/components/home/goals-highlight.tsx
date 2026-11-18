@@ -3,6 +3,7 @@
 import { getGoals, getLatestGoalSnapshot } from "@/lib/api/goals";
 import { formatRupiah } from "@/lib/format";
 import { GoalWithSnapshot } from "@/lib/supabase/types-helper";
+import { notify } from "@/lib/toast";
 import { format, parseISO } from "date-fns";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
@@ -37,7 +38,7 @@ export default function GoalsHighlight() {
 
       setGoals(goalsWithSnapshots)
     } catch {
-      console.error("Failed to fetch goals")
+      notify.error("Failed to fetch goals")
     } finally {
       setLoading(false)
     }

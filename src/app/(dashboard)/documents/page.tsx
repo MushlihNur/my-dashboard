@@ -22,7 +22,6 @@ export default function DocumentsPage() {
       const data = await getDocuments()
       setDocuments(data)
     } catch {
-      console.error("Failed to fetch goals")
       notify.error("Failed to fetch goals")
     } finally {
       setLoading(false)
