@@ -6,6 +6,7 @@ interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
   formatNumber?: boolean
 }
+
 export default function FormInput({
   label,
   type = "text",
@@ -46,6 +47,7 @@ export default function FormInput({
       <label className="text-sm font-medium text-c3">{label}</label>
       <input 
         type={formatNumber ? "text" : type} 
+        inputMode={formatNumber ? "numeric" : props.inputMode}
         placeholder={placeholder}
         value={displayValue}
         onChange={handleChange}
