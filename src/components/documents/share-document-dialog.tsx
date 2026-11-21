@@ -90,6 +90,7 @@ export default function ShareDocumentDialog({
   }
 
   async function handleSave() {
+    if (!share) return
     try {
       const finalExpiry = endOfDay(new Date(expiry)).toISOString()
 
