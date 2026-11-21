@@ -39,7 +39,11 @@ export default function BudgetFormDialog({
     setAmount("")
   }
 
-  async function handleSave() {
+  async function handleSave(e?: React.FormEvent<HTMLFormElement>) {
+    if (e) {
+      e.preventDefault()
+    }
+
     if (!amount) return
     setLoading(true)
 
@@ -72,7 +76,7 @@ export default function BudgetFormDialog({
           <DialogTitle className="text-c3">Set Monthly Limit</DialogTitle>
         </DialogHeader>
 
-        <div className="flex flex-col gap-4 mt-2">
+        <form onSubmit={handleSave} className="flex flex-col gap-4 mt-2">
           <p className="text-xs text-c2 bg-white rounded-lg border border-c4 px-4 py-3">
             {monthLabel}
           </p>
@@ -87,6 +91,7 @@ export default function BudgetFormDialog({
 
           <div className="flex gap-2 justify-end mt-2">
             <Button
+              type="button"
               variant="outline"
               className="cursor-pointer"
               onClick={handleClose}
@@ -95,14 +100,14 @@ export default function BudgetFormDialog({
               Cancel
             </Button>
             <Button
+              type="submit"
               className="cursor-pointer"
-              onClick={handleSave}
               disabled={loading || !amount}
             >
               {loading ? "Saving..." : "Save"}
             </Button>
           </div>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   )

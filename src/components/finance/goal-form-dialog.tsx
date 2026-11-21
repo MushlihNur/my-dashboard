@@ -49,7 +49,11 @@ export default function GoalFormDialog({ goal, onSuccess }: GoalFormDialogProps)
     setError("")
   }
 
-  async function handleSave() {
+  async function handleSave(e?: React.FormEvent<HTMLFormElement>) {
+    if (e) {
+      e.preventDefault()
+    }
+
     if (!name || !targetAmount || !deadline) return
 
     setLoading(true)
@@ -110,7 +114,7 @@ export default function GoalFormDialog({ goal, onSuccess }: GoalFormDialogProps)
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex flex-col gap-4 mt-2">
+        <form onSubmit={handleSave} className="flex flex-col gap-4 mt-2">
           <div className="flex gap-3">
             <div className="flex flex-col gap-1.5 w-20">
               <label className="text-sm font-medium text-c3">Icon</label>
@@ -177,6 +181,7 @@ export default function GoalFormDialog({ goal, onSuccess }: GoalFormDialogProps)
 
           <div className="flex gap-2 justify-end mt-2">
             <Button
+              type="button"
               variant="outline"
               className="cursor-pointer"
               onClick={handleClose}
@@ -185,14 +190,14 @@ export default function GoalFormDialog({ goal, onSuccess }: GoalFormDialogProps)
               Cancel
             </Button>
             <Button
+              type="submit"
               className="cursor-pointer"
-              onClick={handleSave}
               disabled={loading || !name || !targetAmount || !deadline}
             >
               {loading ? "Saving..." : isEdit ? "Save Changes" : "Save"}
             </Button>
           </div>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   )

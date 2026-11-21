@@ -67,7 +67,11 @@ export default function ExpenseFormDialog({
     setError("")
   }
 
-  async function handleSave() {
+  async function handleSave(e?: React.FormEvent<HTMLFormElement>) {
+    if (e) {
+      e.preventDefault()
+    }
+    
     if (!categoryId || !amount || !date) return
 
     setLoading(true)
@@ -113,7 +117,7 @@ export default function ExpenseFormDialog({
         </DialogTitle>
       </DialogHeader>
 
-      <div className="flex flex-col gap-4 mt-2">
+      <form onSubmit={handleSave} className="flex flex-col gap-4 mt-2">
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-medium text-c3">Category</label>
           <select
@@ -158,6 +162,7 @@ export default function ExpenseFormDialog({
 
         <div className="flex gap-2 justify-end mt-2">
           <Button
+            type="button"
             variant="outline"
             className="cursor-pointer"
             onClick={handleClose}
@@ -166,14 +171,14 @@ export default function ExpenseFormDialog({
             Cancel
           </Button>
           <Button
+            type="submit"
             className="cursor-pointer"
-            onClick={handleSave}
             disabled={loading || !categoryId || !amount || !date}
           >
             {loading ? "Saving..." : isEdit ? "Save Changes" : "Save"}
           </Button>
         </div>
-      </div>
+      </form>
     </DialogContent>
   )
 

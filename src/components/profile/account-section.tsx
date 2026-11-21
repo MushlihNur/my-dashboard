@@ -18,7 +18,11 @@ export default function AccountSection({email, onSuccess}: AccountSectionProps) 
   const [confirmPass, setConfirmPass] = useState("")
   const [loading, setLoading] = useState(false)
 
-  async function handleSave() {
+  async function handleSave(e?: React.FormEvent<HTMLFormElement>) {
+    if (e) {
+      e.preventDefault()
+    }
+
     if (newPass !== confirmPass) {
       notify.error("Passwords do not match")
       return
@@ -69,7 +73,7 @@ export default function AccountSection({email, onSuccess}: AccountSectionProps) 
         </div>
 
         {isEditing && (
-          <div className="flex flex-col gap-4 pt-2 border-t border-c4">
+          <form onSubmit={handleSave} className="flex flex-col gap-4 pt-2 border-t border-c4">
             <FormInput
               label="New Password"
               type="password"
@@ -86,6 +90,7 @@ export default function AccountSection({email, onSuccess}: AccountSectionProps) 
             />
             <div className="flex gap-2 justify-end">
               <Button
+                type="button"
                 variant="outline"
                 size="sm"
                 className="cursor-pointer"
@@ -99,15 +104,15 @@ export default function AccountSection({email, onSuccess}: AccountSectionProps) 
                 Cancel
               </Button>
               <Button
+                type="submit"
                 size="sm"
                 className="cursor-pointer"
-                onClick={handleSave}
                 disabled={loading || !newPass || !confirmPass}
               >
                 {loading ? "Saving..." : "Save"}
               </Button>
             </div>
-          </div>
+          </form>
         )}
       </div>
     </div>

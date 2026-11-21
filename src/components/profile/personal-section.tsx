@@ -45,7 +45,11 @@ export default function PersonalSection({profile, onSuccess}: PersonalSectionPro
     setAddress(profile?.address ?? "")
   }
 
-  async function handleSave() {
+  async function handleSave(e?: React.FormEvent<HTMLFormElement>) {
+    if (e) {
+      e.preventDefault()
+    }
+
     setLoading(true)
     try {
       await updateProfile({
@@ -97,7 +101,7 @@ export default function PersonalSection({profile, onSuccess}: PersonalSectionPro
             </div>
           </div>
         ) : (
-          <div className="flex flex-col gap-4">
+          <form onSubmit={handleSave} className="flex flex-col gap-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormInput
                 label="Full Name"
@@ -150,6 +154,7 @@ export default function PersonalSection({profile, onSuccess}: PersonalSectionPro
 
             <div className="flex gap-2 justify-end pt-2 border-t border-c4">
               <Button
+                type="button"
                 variant="outline"
                 size="sm"
                 className="cursor-pointer"
@@ -159,15 +164,15 @@ export default function PersonalSection({profile, onSuccess}: PersonalSectionPro
                 Cancel
               </Button>
               <Button
+                type="submit"
                 size="sm"
                 className="cursor-pointer"
-                onClick={handleSave}
                 disabled={loading}
               >
                 {loading ? "Saving..." : "Save Changes"}
               </Button>
             </div>
-          </div>
+          </form>
         )}
       </div>
     </div>

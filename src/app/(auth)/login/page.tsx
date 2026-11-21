@@ -15,7 +15,11 @@ export default function LoginPage() {
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
-  async function handleLogin() {
+  async function handleLogin(e?: React.FormEvent<HTMLFormElement>) {
+    if (e) {
+      e.preventDefault()
+    }
+
     setError("")
     setLoading(true)
 
@@ -45,7 +49,7 @@ export default function LoginPage() {
         </div>
 
         {/* Form */}
-        <div className="flex flex-col gap-4">
+        <form onSubmit={handleLogin} className="flex flex-col gap-4">
           <FormInput 
             type="email"
             label="Email"
@@ -68,13 +72,13 @@ export default function LoginPage() {
           )}
 
           <Button
+            type="submit"
             className="w-full py-2.5 cursor-pointer"
-            onClick={handleLogin}
             disabled={loading || !email || !password}
           >
             {loading ? "Signing in..." : "Sign In"}
           </Button>
-        </div>
+        </form>
 
       </div>
     </div>

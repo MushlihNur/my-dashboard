@@ -86,7 +86,11 @@ export default function FamilyMemberFormDialog({
     else setInternalOpen(false)
   }
 
-  async function handleSave() {
+  async function handleSave(e?: React.FormEvent<HTMLFormElement>) {
+    if (e) {
+      e.preventDefault()
+    }
+
     if (!name || !relation) return
     setLoading(true)
 
@@ -135,7 +139,7 @@ export default function FamilyMemberFormDialog({
         </DialogTitle>
       </DialogHeader>
 
-      <div className="flex flex-col gap-4 mt-2">
+      <form onSubmit={handleSave} className="flex flex-col gap-4 mt-2">
         <div className="grid grid-cols-2 gap-3">
           <div className="col-span-2">
             <FormInput
@@ -247,18 +251,23 @@ export default function FamilyMemberFormDialog({
         </div>
 
         <div className="flex gap-2 justify-end mt-2">
-          <Button variant="outline" className="cursor-pointer" onClick={handleClose} disabled={loading}>
+          <Button
+            type="button"
+            variant="outline"
+            className="cursor-pointer"
+            onClick={handleClose}
+            disabled={loading}>
             Cancel
           </Button>
           <Button
+            type="submit"
             className="cursor-pointer"
-            onClick={handleSave}
             disabled={loading || !name || !relation || (relation === "Other" && !otherRelation)}
           >
             {loading ? "Saving..." : isEdit ? "Save Changes" : "Save"}
           </Button>
         </div>
-      </div>
+      </form>
     </DialogContent>
   )
 

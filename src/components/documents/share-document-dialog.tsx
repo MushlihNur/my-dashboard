@@ -65,9 +65,6 @@ export default function ShareDocumentDialog({
   }
 
   async function handleGenerate() {
-    if (!recipient || !purpose || !expiry) return
-    setLoading(true)
-
     try {
       const finalExpiry = endOfDay(new Date(expiry)).toISOString()
 
@@ -89,15 +86,10 @@ export default function ShareDocumentDialog({
           ? "Demo mode: documents are read-only"
           : "Failed to generate share link"
       )
-    } finally {
-      setLoading(false)
     }
   }
 
   async function handleSave() {
-    if (!share || !expiry) return
-    setLoading(true)
-
     try {
       const finalExpiry = endOfDay(new Date(expiry)).toISOString()
 
@@ -112,9 +104,20 @@ export default function ShareDocumentDialog({
           ? "Demo mode: documents are read-only"
           : "Failed to update share link"
       )
-    } finally {
-      setLoading(false)
     }
+  }
+
+  async function handleSubmit(e?: React.FormEvent<HTMLFormElement>) {
+    e?.preventDefault()
+    if (loading || !recipient || !purpose || !expiry) return
+
+    setLoading(true)
+    if (isEditShare) {
+      await handleSave()
+    } else {
+      await handleGenerate()
+    }
+    setLoading(false)
   }
 
   async function handleCopy() {
@@ -141,7 +144,7 @@ export default function ShareDocumentDialog({
         </div>
 
         {!generatedLink || isEditShare ? (
-          <>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <FormInput 
               label="Recipient Name"
               placeholder="e.g. John Doe"
@@ -173,6 +176,7 @@ export default function ShareDocumentDialog({
               <div className="flex items-center gap-2 bg-white border border-c4 rounded-lg px-3 py-2">
                 <span className="text-xs text-c2 flex-1 w-0 truncate">{generatedLink}</span>
                 <button
+                  type="button"
                   onClick={handleCopy}
                   className="shrink-0 text-c2 hover:text-c3 transition cursor-pointer"
                 >
@@ -182,12 +186,12 @@ export default function ShareDocumentDialog({
             )}
 
             <div className="flex gap-2 justify-end mt-2">
-              <Button variant="outline" className="cursor-pointer" onClick={handleClose}>
+              <Button type="button" variant="outline" className="cursor-pointer" onClick={handleClose}>
                 Cancel
               </Button>
               <Button
+                type="submit"
                 className="cursor-pointer"
-                onClick={isEditShare ? handleSave : handleGenerate}
                 disabled={loading || !recipient || !purpose || !expiry}
               >
                 {loading 
@@ -195,7 +199,7 @@ export default function ShareDocumentDialog({
                   : (isEditShare ? "Save Changes" : "Generate Link")}
               </Button>
             </div>
-          </>
+          </form>
         ) : (
           <div className="flex flex-col gap-4 mt-2">
             <div className="flex flex-col bg-green-50 border border-green-200 rounded-lg px-4 py-3">
@@ -208,6 +212,7 @@ export default function ShareDocumentDialog({
             <div className="flex items-center gap-2 bg-white border border-c4 rounded-lg px-3 py-2">
               <p className="text-xs text-c2 flex-1 w-0 truncate">{generatedLink}</p>
               <button
+                type="button"
                 onClick={handleCopy}
                 className="shrink-0 text-c2 hover:text-c3 transition cursor-pointer"
               >
@@ -217,6 +222,7 @@ export default function ShareDocumentDialog({
 
             <div className="flex gap-2 justify-end mt-2">
               <Button 
+                type="button"
                 variant="outline" 
                 className="cursor-pointer" 
                 onClick={handleClose}
@@ -224,6 +230,7 @@ export default function ShareDocumentDialog({
                 Close
               </Button>
               <Button 
+                type="button"
                 className="cursor-pointer" 
                 onClick={handleCopy}
               >

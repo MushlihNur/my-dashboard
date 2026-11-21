@@ -60,7 +60,11 @@ export default function SnapshotFormDialog({
     setError("")
   }
 
-  async function handleSave() {
+  async function handleSave(e?: React.FormEvent<HTMLFormElement>) {
+    if (e) {
+      e.preventDefault()
+    }
+
     if (!amount || !date) return
 
     setLoading(true)
@@ -116,7 +120,7 @@ export default function SnapshotFormDialog({
           <DialogTitle className="text-c3">Add Snapshot</DialogTitle>
         </DialogHeader>
 
-        <div className="flex flex-col gap-4 mt-2">
+        <form onSubmit={handleSave} className="flex flex-col gap-4 mt-2">
           <div className="bg-white rounded-lg border border-c4 px-4 py-3 flex items-center justify-between">
             <span className="text-sm text-c2">Goal</span>
             <span className="text-sm font-medium text-c3">{goalName}</span>
@@ -174,6 +178,7 @@ export default function SnapshotFormDialog({
 
           <div className="flex gap-2 justify-end mt-2">
             <Button
+              type="button"
               variant="outline"
               className="cursor-pointer"
               onClick={handleClose}
@@ -182,14 +187,14 @@ export default function SnapshotFormDialog({
               Cancel
             </Button>
             <Button
+              type="submit"
               className="cursor-pointer"
-              onClick={handleSave}
               disabled={loading || !amount || !date}
             >
               {loading ? "Saving..." : isEdit ? "Save Changes" : "Save"}
             </Button>
           </div>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   )

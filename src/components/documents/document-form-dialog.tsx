@@ -79,7 +79,11 @@ export default function DocumentFormDialog({
     setPreview(null)
   }
 
-  async function handleSave() {
+  async function handleSave(e?: React.FormEvent<HTMLFormElement>) {
+    if (e) {
+      e.preventDefault()
+    }
+
     if (!name || !type) return
     setLoading(true)
 
@@ -124,7 +128,7 @@ export default function DocumentFormDialog({
         </DialogTitle>
       </DialogHeader>
 
-      <div className="flex flex-col gap-4 mt-2">
+      <form onSubmit={handleSave} className="flex flex-col gap-4 mt-2">
         <FormInput
           label="Document Name"
           placeholder="e.g. KTP Mushlih"
@@ -161,6 +165,7 @@ export default function DocumentFormDialog({
               <div className="relative w-full h-32 rounded-lg overflow-hidden border border-c4">
                 <img src={preview} alt="preview" className="w-full h-full object-contain" />
                 <button
+                  type="button"
                   onClick={() => { setFile(null); setPreview(null) }}
                   className="absolute top-2 right-2 bg-white rounded-full p-0.5 shadow cursor-pointer"
                 >
@@ -174,13 +179,14 @@ export default function DocumentFormDialog({
           {!preview && file && (
             <div className="flex items-center gap-2 bg-white border border-c4 rounded-lg px-3 py-2">
               <span className="text-xs text-c2 flex-1 truncate">{file.name}</span>
-              <button onClick={() => setFile(null)} className="text-slate-400 hover:text-red-500 cursor-pointer">
+              <button type="button" onClick={() => setFile(null)} className="text-slate-400 hover:text-red-500 cursor-pointer">
                 <X size={12} />
               </button>
             </div>
           )}
 
           <button
+            type="button"
             onClick={() => fileInputRef.current?.click()}
             className="flex items-center justify-center gap-2 w-full px-3 py-2.5 text-sm border border-dashed border-c4 rounded-lg text-c2 hover:border-c3 hover:text-c3 transition cursor-pointer bg-white"
           >
@@ -199,18 +205,23 @@ export default function DocumentFormDialog({
         </div>
 
         <div className="flex gap-2 justify-end mt-2">
-          <Button variant="outline" className="cursor-pointer" onClick={handleClose} disabled={loading}>
+          <Button
+            type="button"
+            variant="outline"
+            className="cursor-pointer"
+            onClick={handleClose}
+            disabled={loading}>
             Cancel
           </Button>
           <Button
+            type="submit"
             className="cursor-pointer"
-            onClick={handleSave}
             disabled={loading || !name || !type}
           >
             {loading ? "Saving..." : isEdit ? "Save Changes" : "Save"}
           </Button>
         </div>
-      </div>
+      </form>
     </DialogContent>
   )
 
